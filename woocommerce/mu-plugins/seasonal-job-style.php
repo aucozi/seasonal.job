@@ -11,6 +11,10 @@
 defined('ABSPATH') || exit;
 
 add_action('wp_enqueue_scripts', function (): void {
+    // Only for Twenty Twenty-Four itself; the seasonal job child theme brings its own styles.
+    if (get_stylesheet() !== 'twentytwentyfour') {
+        return;
+    }
     $file = WPMU_PLUGIN_DIR . '/seasonal-job-assets/style.css';
     wp_enqueue_style(
         'seasonal-job-style',

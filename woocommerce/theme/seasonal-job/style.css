@@ -1,0 +1,176 @@
+/*
+Theme Name: seasonal job
+Theme URI: https://shop.benzilinskas.com
+Description: The benzilinskas.com look for the seasonal job shop: Albura type, off-white paper, a left column with the menu and the content on the right. Child theme of Twenty Twenty-Four.
+Author: seasonal job
+Template: twentytwentyfour
+Version: 1.0.0
+Requires at least: 6.4
+Text Domain: seasonal-job
+*/
+
+:root {
+  --sj-bg: #f5f3f1;
+  --sj-panel: #edebe9;
+  --sj-ink: #000;
+  --sj-muted: #6d6466;
+  --sj-font: "Albura", Georgia, "Times New Roman", serif;
+}
+
+body {
+  margin: 0;
+  background: var(--sj-bg);
+  color: var(--sj-ink);
+  font: 400 20px/1.55 var(--sj-font);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+a:hover { text-decoration-thickness: 2px; }
+h1, h2, h3, h4 { font-family: var(--sj-font); font-weight: 400; line-height: 1.2; letter-spacing: normal; }
+img { max-width: 100%; height: auto; }
+:focus-visible { outline: 2px solid var(--sj-ink); outline-offset: 3px; }
+.sj-small { font-size: 15px; color: var(--sj-muted); }
+.sj-small a { color: inherit; }
+
+/* Layout: left column (header part) and content (main), 1100px wide like the main site.
+   The footer part's two blocks drop into the grid: signup under the content, links under the menu. */
+.wp-site-blocks {
+  display: grid;
+  grid-template-columns: 450px minmax(0, 620px);
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: "side content" "foot content" ". signup";
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 140px 0 96px !important;
+}
+.wp-site-blocks > * { margin-block-start: 0 !important; }
+.wp-site-blocks > header { grid-area: side; padding-right: 48px; }
+.wp-site-blocks > main { grid-area: content; min-width: 0; padding: 4px 0 0 !important; margin: 0 !important; }
+.wp-site-blocks > footer { display: contents; }
+.sj-signup-block { grid-area: signup; }
+.sj-foot { grid-area: foot; align-self: start; padding: 28px 48px 0 0; }
+.wp-site-blocks > main > * { max-width: none !important; margin-left: 0 !important; margin-right: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
+.wp-site-blocks > main .alignwide, .wp-site-blocks > main .alignfull { max-width: none !important; margin-left: 0 !important; margin-right: 0 !important; }
+
+/* Left column */
+.sj-site-name { font-size: 32px; line-height: 1.2; margin: 0 0 22px; }
+.sj-site-name a, .sj-site-title a { text-decoration: none; }
+.sj-site-title { font-size: 16px; font-weight: 700; text-transform: uppercase; margin: 0 0 6px; }
+.sj-site-title span { font-weight: 400; }
+.sj-nav { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; font-size: 14.4px; letter-spacing: 0.04em; padding-top: 6px; }
+.sj-nav a { text-decoration: none; }
+.sj-nav a:hover, .sj-nav a[aria-current] { text-decoration: underline; }
+.sj-social { list-style: none; display: flex; gap: 32px; margin: 0 0 18px; padding: 0; font-size: 16px; }
+.sj-social a { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+.sj-social svg { width: 24px; height: 24px; fill: currentColor; }
+.sj-foot-links { display: flex; gap: 18px; font-size: 14.4px; letter-spacing: 0.04em; margin: 0 0 10px; }
+.sj-foot-links a { text-decoration: none; }
+.sj-copyright { font-size: 11px; margin: 0; }
+
+/* Content */
+.sj-page-title, .wp-site-blocks > main h1.wp-block-post-title { font-size: 32px; font-style: italic; margin: 0 0 0.7em; }
+.sj-lede { font-size: 20px; }
+.sj-prose ul { padding-left: 1.1em; }
+.sj-prose li { margin-bottom: 0.5em; }
+.sj-notice { border: 1px solid var(--sj-ink); padding: 14px 16px; }
+
+/* Shop grid */
+.sj-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px 28px; margin-top: 36px; }
+.sj-card { display: block; text-decoration: none; }
+.sj-card-media { position: relative; display: block; aspect-ratio: 1; background: var(--sj-panel); overflow: hidden; }
+.sj-card-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.sj-card-media .alt { position: absolute; inset: 0; opacity: 0; transition: opacity 0.3s ease; }
+.sj-card:hover .sj-card-media .alt { opacity: 1; }
+.sj-card-name { display: block; margin-top: 12px; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+.sj-card-meta { display: block; font-size: 15px; color: var(--sj-muted); }
+.sj-card.is-sold-out .sj-card-media img { opacity: 0.45; }
+
+/* Product page */
+.sj-back { margin: 0 0 18px; }
+.sj-price-line { font-size: 22px; margin: -0.3em 0 24px; }
+.sj-price-line span { font-size: 15px; color: var(--sj-muted); }
+.sj-gallery-main { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--sj-panel); }
+.sj-thumbs { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+.sj-thumbs a { display: block; border: 1px solid transparent; }
+.sj-thumbs a[aria-current] { border-color: var(--sj-ink); }
+.sj-thumbs img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--sj-panel); }
+.sj-buy { margin: 28px 0 32px; }
+.sj-size-guide { margin: 0 0 6px; }
+.sj-facts { list-style: none; padding: 18px 0 0; margin: 28px 0 0; border-top: 1px solid var(--sj-ink); }
+.sj-facts li { margin-bottom: 4px; }
+
+/* WooCommerce's add-to-cart form, dressed like the custom shop */
+.sj-buy form.cart { margin: 0; }
+.sj-buy table.variations { border: 0; margin: 0 0 12px; border-collapse: collapse; }
+.sj-buy table.variations th, .sj-buy table.variations td { border: 0; padding: 0; text-align: left; display: block; }
+.sj-buy table.variations tr.sj-hidden { display: none; }
+.sj-buy table.variations label { font-size: 15px; color: var(--sj-muted); font-weight: 400; }
+.sj-buy table.variations select.sj-replaced { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.sj-buy .reset_variations { display: none !important; }
+.sj-sizes { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 6px; }
+.sj-size { cursor: pointer; background: transparent; border: 1px solid var(--sj-ink); border-radius: 0; padding: 9px 12px 7px; min-width: 64px; font: inherit; color: var(--sj-ink); line-height: 1.2; }
+.sj-size small { display: block; font-size: 12px; color: var(--sj-muted); }
+.sj-size[aria-pressed="true"] { background: var(--sj-ink); color: var(--sj-bg); }
+.sj-size[aria-pressed="true"] small { color: var(--sj-bg); }
+.sj-size:disabled { cursor: not-allowed; opacity: 0.35; text-decoration: line-through; }
+.sj-buy .woocommerce-variation-price, .sj-buy .woocommerce-variation-availability, .sj-buy .stock { display: none; }
+.sj-buy .quantity { display: none !important; }
+.sj-buy .single_add_to_cart_button, .wp-element-button, .wc-block-components-button:not(.is-link), .button, .wp-block-button__link {
+  background: var(--sj-ink) !important; color: var(--sj-bg) !important; border: 1px solid var(--sj-ink) !important; border-radius: 0 !important;
+  font-family: var(--sj-font) !important; font-size: 15px !important; letter-spacing: 0.06em; text-transform: uppercase; padding: 13px 26px !important; cursor: pointer;
+}
+.sj-buy .single_add_to_cart_button:hover, .wp-element-button:hover, .button:hover { background: var(--sj-bg) !important; color: var(--sj-ink) !important; }
+.sj-buy .single_add_to_cart_button.disabled { opacity: 0.4; }
+.sj-buy .woocommerce-variation-add-to-cart, .sj-buy form.cart:not(.variations_form) { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.sj-buy #wcpay-express-checkout-element, .sj-buy .wcpay-payment-request-wrapper, .sj-buy .wc-block-components-express-payment { width: 100%; margin-top: 4px; }
+
+/* Hang tag copy in descriptions, set like the printed tag */
+.sj-description .sj-hang-tag { margin: 28px 0 0; padding: 20px 20px 16px; background: #fff; border: 1px solid var(--sj-ink); max-width: 420px; }
+.sj-hang-tag .sj-hang-tag-for { font: italic 700 16px Arial, Helvetica, sans-serif; text-decoration: underline; text-underline-offset: 3px; margin: 0 0 8px; }
+.sj-hang-tag ul { list-style: none; margin: 0 0 12px; padding: 8px 12px; border: 1px solid var(--sj-ink); font: italic 700 17px/1.45 Arial, Helvetica, sans-serif; }
+.sj-hang-tag .sj-hang-tag-warning { margin: 0; padding: 10px 12px; border: 1px solid var(--sj-ink); font-size: 15px; line-height: 1.4; }
+.sj-hang-tag .sj-hang-tag-warning strong { text-transform: uppercase; letter-spacing: 0.04em; }
+.sj-description table { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 17px; }
+.sj-description th, .sj-description td { text-align: left; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--sj-ink); font-weight: 400; }
+.sj-description th { font-size: 15px; color: var(--sj-muted); }
+
+/* Notices, inputs, cart and checkout blocks */
+.woocommerce-message, .woocommerce-info, .woocommerce-error, .wc-block-components-notice-banner {
+  border: 1px solid var(--sj-ink) !important; border-radius: 0 !important; background: transparent !important; color: var(--sj-ink) !important;
+  padding: 12px 16px !important; margin: 0 0 28px !important; font-size: 16px; list-style: none;
+}
+.woocommerce-message::before, .woocommerce-info::before { display: none; }
+.woocommerce-message .button { float: right; padding: 6px 12px !important; font-size: 13px !important; }
+input[type="text"], input[type="email"], input[type="tel"], input[type="number"], input[type="password"], select, textarea,
+.wc-block-components-text-input input, .wc-block-components-combobox .wc-block-components-combobox-control input {
+  background: transparent !important; border: 1px solid var(--sj-ink) !important; border-radius: 0 !important; font-family: var(--sj-font) !important; color: var(--sj-ink);
+}
+.wc-block-cart, .wc-block-checkout { font-family: var(--sj-font); }
+.wc-block-components-product-name { font-style: italic; }
+
+/* Drop-list signup */
+.sj-signup-block { margin-top: 72px; padding-top: 24px; border-top: 1px solid var(--sj-ink); }
+.sj-signup-block h2 { font-size: 24px; font-style: italic; margin: 0 0 0.4em; }
+.sj-signup-block p { font-size: 17px; margin: 0 0 1em; }
+.sj-signup { display: flex; gap: 8px; }
+.sj-signup input[type="email"] { flex: 1; padding: 10px 12px; font-size: 18px; }
+.sj-signup button { white-space: nowrap; padding: 10px 18px !important; }
+.sj-signup .sj-hp { position: absolute; left: -9999px; }
+
+@media (max-width: 1140px) {
+  .wp-site-blocks { grid-template-columns: 320px minmax(0, 1fr); padding: 96px 32px 80px !important; }
+}
+@media (max-width: 781px) {
+  body { font-size: 18px; }
+  .wp-site-blocks { grid-template-columns: minmax(0, 1fr); grid-template-areas: "side" "content" "signup" "foot"; grid-template-rows: auto; padding: 40px 24px 56px !important; }
+  .wp-site-blocks > header { padding: 0 0 32px; }
+  .sj-site-name { font-size: 28px; margin-bottom: 14px; }
+  .sj-nav { flex-direction: row; flex-wrap: wrap; gap: 8px 20px; }
+  .sj-foot { padding: 48px 0 0; }
+  .sj-grid { gap: 32px 16px; }
+  .sj-thumbs { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+}
+@media (max-width: 480px) {
+  .sj-grid { grid-template-columns: minmax(0, 1fr); }
+  .sj-signup { flex-direction: column; }
+}

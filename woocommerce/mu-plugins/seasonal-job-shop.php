@@ -71,3 +71,107 @@ add_filter('woocommerce_package_rates', function (array $rates): array {
     $free = array_filter($rates, fn ($rate) => $rate->get_method_id() === 'free_shipping');
     return $free ?: $rates;
 }, 100);
+
+/* ---------------------------------------------------------------------------------------
+ * Drop list: emails from the "Next drop" form, kept in their own table so they survive
+ * theme changes. WooCommerce → Drop list shows them and downloads a CSV.
+ * ------------------------------------------------------------------------------------- */
+
+function sj_signups_table(): string
+{
+    global $wpdb;
+    return $wpdb->prefix . 'sj_signups';
+}
+
+function sj_signups_install(): void
+{
+    global $wpdb;
+    if (get_option('sj_signups_db') === '1') {
+        return;
+    }
+    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+    dbDelta('CREATE TABLE ' . sj_signups_table() . " (
+        id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+        email varchar(190) NOT NULL,
+        created_at datetime NOT NULL,
+        PRIMARY KEY  (id),
+        UNIQUE KEY email (email)
+    ) " . $wpdb->get_charset_collate() . ';');
+    update_option('sj_signups_db', '1', false);
+}
+
+add_shortcode('sj_signup', function (): string {
+    $status = sanitize_key($_GET['sj_signup'] ?? '');
+    $message = ['ok' => 'You’re on the list. We’ll email you before the next drop.', 'bad' => 'That email address doesn’t look right. Try again?'][$status] ?? '';
+    $back = remove_query_arg('sj_signup', home_url(wp_unslash($_SERVER['REQUEST_URI'] ?? '/')));
+    return '<h2 id="sj-next-drop">Next drop</h2>'
+        . '<p>Edition 02 and new designs are coming, shipping to the US and Europe. Get the link a day early.</p>'
+        . ($message ? '<p class="sj-signup-msg" role="status">' . esc_html($message) . '</p>' : '')
+        . '<form class="sj-signup" method="post" action="' . esc_url(admin_url('admin-post.php')) . '">'
+        . '<input type="hidden" name="action" value="sj_signup">'
+        . '<input type="hidden" name="back" value="' . esc_attr($back) . '">'
+        . '<label class="sj-hp" aria-hidden="true">Leave empty <input type="text" name="website" tabindex="-1" autocomplete="off"></label>'
+        . '<label class="screen-reader-text" for="sj-signup-email">Email</label>'
+        . '<input id="sj-signup-email" type="email" name="email" required autocomplete="email" placeholder="your@email.com">'
+        . '<button class="wp-element-button" type="submit">Notify me</button>'
+        . '</form>';
+});
+
+function sj_handle_signup(): void
+{
+    $back = wp_validate_redirect(wp_unslash($_POST['back'] ?? ''), home_url('/'));
+    if (!empty($_POST['website'])) { // Filled-in honeypot: a bot.
+        wp_safe_redirect($back);
+        exit;
+    }
+    $email = sanitize_email(wp_unslash($_POST['email'] ?? ''));
+    if (!is_email($email)) {
+        wp_safe_redirect(add_query_arg('sj_signup', 'bad', $back) . '#sj-next-drop');
+        exit;
+    }
+    sj_signups_install();
+    global $wpdb;
+    $wpdb->query($wpdb->prepare(
+        'INSERT IGNORE INTO ' . sj_signups_table() . ' (email, created_at) VALUES (%s, %s)',
+        strtolower($email),
+        current_time('mysql')
+    ));
+    wp_safe_redirect(add_query_arg('sj_signup', 'ok', $back) . '#sj-next-drop');
+    exit;
+}
+add_action('admin_post_nopriv_sj_signup', 'sj_handle_signup');
+add_action('admin_post_sj_signup', 'sj_handle_signup');
+
+add_action('admin_menu', function (): void {
+    add_submenu_page('woocommerce', 'Drop list', 'Drop list', 'manage_woocommerce', 'sj-drop-list', function (): void {
+        sj_signups_install();
+        global $wpdb;
+        $rows = $wpdb->get_results('SELECT email, created_at FROM ' . sj_signups_table() . ' ORDER BY id DESC');
+        $csv = wp_nonce_url(admin_url('admin-post.php?action=sj_signups_csv'), 'sj_signups_csv');
+        echo '<div class="wrap"><h1>Drop list</h1><p>' . count($rows) . ' people want to hear about the next drop. '
+            . '<a class="button" href="' . esc_url($csv) . '">Download CSV</a></p>'
+            . '<table class="widefat striped"><thead><tr><th>Email</th><th>Joined</th></tr></thead><tbody>';
+        foreach ($rows as $row) {
+            echo '<tr><td>' . esc_html($row->email) . '</td><td>' . esc_html($row->created_at) . '</td></tr>';
+        }
+        echo $rows ? '' : '<tr><td colspan="2">No signups yet.</td></tr>';
+        echo '</tbody></table></div>';
+    });
+}, 60);
+
+add_action('admin_post_sj_signups_csv', function (): void {
+    if (!current_user_can('manage_woocommerce') || !check_admin_referer('sj_signups_csv')) {
+        wp_die('Not allowed');
+    }
+    sj_signups_install();
+    global $wpdb;
+    $rows = $wpdb->get_results('SELECT email, created_at FROM ' . sj_signups_table() . ' ORDER BY id', ARRAY_N);
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename="drop-list-' . gmdate('Y-m-d') . '.csv"');
+    $out = fopen('php://output', 'w');
+    fputcsv($out, ['Email', 'Joined']);
+    foreach ($rows as $row) {
+        fputcsv($out, array_map(fn ($v) => preg_match('/^[=+\-@]/', (string) $v) ? "'" . $v : $v, $row));
+    }
+    exit;
+});

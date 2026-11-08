@@ -1,0 +1,47 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 2,
+  "settings": {
+    "appearanceTools": true,
+    "layout": { "contentSize": "620px", "wideSize": "1100px" },
+    "color": {
+      "palette": [
+        { "slug": "base", "color": "#f5f3f1", "name": "Paper" },
+        { "slug": "base-2", "color": "#edebe9", "name": "Panel" },
+        { "slug": "contrast", "color": "#000000", "name": "Ink" },
+        { "slug": "contrast-2", "color": "#6d6466", "name": "Muted" },
+        { "slug": "contrast-3", "color": "#6d6466", "name": "Muted 2" },
+        { "slug": "accent", "color": "#edebe9", "name": "Accent" }
+      ]
+    },
+    "typography": {
+      "fontFamilies": [
+        {
+          "slug": "body",
+          "name": "Albura",
+          "fontFamily": "\"Albura\", Georgia, \"Times New Roman\", serif",
+          "fontFace": [
+            { "fontFamily": "Albura", "fontStyle": "normal", "fontWeight": "400", "src": ["file:./assets/fonts/albura_normal_400.otf"] },
+            { "fontFamily": "Albura", "fontStyle": "italic", "fontWeight": "400", "src": ["file:./assets/fonts/albura_italic_400.otf"] },
+            { "fontFamily": "Albura", "fontStyle": "normal", "fontWeight": "545 700", "src": ["file:./assets/fonts/albura_normal_545.otf"] }
+          ]
+        },
+        { "slug": "heading", "name": "Albura (headings)", "fontFamily": "\"Albura\", Georgia, \"Times New Roman\", serif" }
+      ]
+    }
+  },
+  "styles": {
+    "color": { "background": "var(--wp--preset--color--base)", "text": "var(--wp--preset--color--contrast)" },
+    "typography": { "fontFamily": "var(--wp--preset--font-family--body)", "fontSize": "20px", "lineHeight": "1.55" },
+    "spacing": { "padding": { "top": "0", "bottom": "0", "left": "0", "right": "0" } },
+    "elements": {
+      "link": { "color": { "text": "var(--wp--preset--color--contrast)" }, "typography": { "textDecoration": "underline" } },
+      "heading": { "typography": { "fontFamily": "var(--wp--preset--font-family--body)", "fontWeight": "400" } },
+      "button": {
+        "border": { "radius": "0" },
+        "color": { "background": "var(--wp--preset--color--contrast)", "text": "var(--wp--preset--color--base)" },
+        "typography": { "fontFamily": "var(--wp--preset--font-family--body)", "fontSize": "15px", "letterSpacing": "0.06em", "textTransform": "uppercase" }
+      }
+    }
+  }
+}

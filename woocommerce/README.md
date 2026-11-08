@@ -2,6 +2,13 @@
 
 The live shop runs on WordPress + WooCommerce + WooPayments in `public_html/__shop` on Hostinger. These files are the customisations; everything else (products, stock, shipping, payments) is managed in WordPress or the Woo mobile app.
 
+## theme/seasonal-job/ → upload to `wp-content/themes/seasonal-job/`
+
+The active theme: a child of Twenty Twenty-Four with the same design as the custom shop and benzilinskas.com. It has the left column with the menu, the two-column product grid with "X of 33 left", the product page with photo thumbnails and size buttons, the hang-tag box, and the "Next drop" signup.
+- **Templates:** thin wrappers; `functions.php` draws the markup.
+- **Add-to-cart, cart and checkout:** WooCommerce's own, so stock, WooPayments and the Woo app work as normal.
+- **To undo:** activate Twenty Twenty-Four in Appearance → Themes.
+
 ## mu-plugins/ → upload to `wp-content/mu-plugins/`
 
 Must-use plugins load automatically and can't be switched off by accident.
@@ -9,7 +16,8 @@ Must-use plugins load automatically and can't be switched off by accident.
 - `seasonal-job-shop.php`
   - **First Edition numbering:** as each order becomes paid, every piece gets its number, saved on the order line as "Edition number: No. 7 / 33". It shows in the order screen, the Woo app and the order emails. Write it on the card you pack. The runs are product 175 (tee, 33), 334 (trucker, 9) and 335 (cap, 22). Numbers count up per product and are never reused.
   - **Free shipping:** when an order gets free shipping (from $65), the paid $6 rate is hidden.
-- `seasonal-job-style.php` + `seasonal-job-assets/`: the benzilinskas.com look (Albura font, `#f5f3f1` paper, black ink) on top of the Twenty Twenty-Four theme.
+- **Drop list:** the `[sj_signup]` "Next drop" form saves emails to their own table. **WooCommerce → Drop list** shows them and downloads a CSV.
+- `seasonal-job-style.php` + `seasonal-job-assets/`: a lighter restyle, used only if Twenty Twenty-Four itself is active again.
 
 ## backup-2026-11-08/
 
@@ -22,3 +30,5 @@ The products as they were before the First Edition setup: raw data, photos and a
 - **Shipping:** US only; "United States" zone with $6 flat rate and free shipping from $65.
 - **Payments:** WooPayments with Apple Pay and Google Pay; direct bank transfer off.
 - **Visibility:** still in "Coming soon" mode, with the private preview link turned on.
+- **Pages:** About, Size guide, Shipping and Returns created for the menu.
+- **Product template:** the customised WooCommerce single-product template was cleared so the theme's product page shows. The old version is saved in `backup-2026-11-08/site/single-product.html`.
