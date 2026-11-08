@@ -57,6 +57,7 @@ function db_install(): void
             edition_size INT NOT NULL,
             next_number INT NOT NULL DEFAULT 1,
             image VARCHAR(160) NOT NULL DEFAULT '',
+            gallery VARCHAR(500) NOT NULL DEFAULT '',
             sort INT NOT NULL DEFAULT 0,
             active INT NOT NULL DEFAULT 1
         )$suffix",
@@ -118,10 +119,11 @@ function db_install(): void
 
     $pdo->beginTransaction();
     foreach (catalog_seed() as $sort => $product) {
-        q('INSERT INTO products (slug, name, subtitle, description, price_cents, edition_size, image, sort)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [
+        q('INSERT INTO products (slug, name, subtitle, description, price_cents, edition_size, image, gallery, sort)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [
             $product['slug'], $product['name'], $product['subtitle'], $product['description'],
-            $product['price_cents'], $product['edition_size'], $product['image'], $sort,
+            $product['price_cents'], $product['edition_size'], $product['image'],
+            implode(',', $product['gallery'] ?? []), $sort,
         ]);
         $productId = (int) $pdo->lastInsertId();
         $variantSort = 0;

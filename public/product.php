@@ -20,7 +20,9 @@ render('header', [
 ?>
 <main class="wrap product">
   <div class="product-media">
-    <img src="<?= e(asset($product['image'])) ?>" alt="<?= e($product['name']) ?>">
+    <?php foreach (product_images($product) as $i => $image): ?>
+      <img src="<?= e(asset($image)) ?>" alt="<?= $i === 0 ? e($product['name']) : '' ?>"<?= $i ? ' loading="lazy"' : '' ?>>
+    <?php endforeach; ?>
   </div>
   <div class="product-info">
     <p class="meta"><a href="<?= e(url('#shop')) ?>">Shop</a> / <?= e($product['subtitle']) ?></p>

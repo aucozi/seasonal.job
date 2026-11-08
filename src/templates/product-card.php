@@ -1,7 +1,8 @@
-<?php $soldOut = $product['remaining'] <= 0; ?>
+<?php $soldOut = $product['remaining'] <= 0; $images = product_images($product); ?>
 <a class="card<?= $soldOut ? ' is-sold-out' : '' ?>" href="<?= e(url('product.php?p=' . $product['slug'])) ?>">
   <div class="card-media">
-    <img src="<?= e(asset($product['image'])) ?>" alt="<?= e($product['name']) ?>" loading="lazy">
+    <img src="<?= e(asset($images[0])) ?>" alt="<?= e($product['name']) ?>" loading="lazy">
+    <?php if (isset($images[1])): ?><img class="alt" src="<?= e(asset($images[1])) ?>" alt="" loading="lazy"><?php endif; ?>
     <?php if ($soldOut): ?><span class="tag">Sold out</span><?php endif; ?>
   </div>
   <div class="card-body">

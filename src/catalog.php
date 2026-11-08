@@ -17,6 +17,7 @@ function catalog_seed(): array
             'price_cents' => 4000,
             'edition_size' => 33,
             'image' => 'img/lithusa-tee.jpg',
+            'gallery' => ['img/lithusa-tee-held.jpg'],
             'variants' => ['S' => 4, 'M' => 10, 'L' => 12, 'XL' => 4, '2XL' => 3],
         ],
         [
@@ -63,6 +64,12 @@ function product_by_slug(string $slug): ?array
     $product['variants'] = variants_for((int) $product['id']);
     $product['remaining'] = array_sum(array_column($product['variants'], 'stock'));
     return $product;
+}
+
+/** The main image first, then any extra photos. */
+function product_images(array $product): array
+{
+    return array_values(array_filter([$product['image'], ...explode(',', $product['gallery'])]));
 }
 
 function variants_for(int $productId): array
