@@ -9,12 +9,14 @@ function catalog_seed(): array
             'slug' => 'lithusa-tee',
             'name' => 'LITHUSA Tee',
             'subtitle' => 'First Edition · 33 made',
-            'description' => "The original LITHUSA tee from the fair run, with its original tags and packaging. "
+            'description' => "The Stars and Stripes, redrawn in Lithuania's yellow, green and red, on a black "
+                . "American Apparel tee.\n\n"
+                . "This is the original LITHUSA tee from the fair run, with its original tags and packaging. "
                 . "Only 33 exist. Every order ships with a card numbered out of 33.\n\n"
                 . "LITHUSA will return later as a printed-to-order Edition 02. This is the first one.",
             'price_cents' => 4000,
             'edition_size' => 33,
-            'image' => 'img/lithusa-tee.svg',
+            'image' => 'img/lithusa-tee.jpg',
             'variants' => ['S' => 4, 'M' => 10, 'L' => 12, 'XL' => 4, '2XL' => 3],
         ],
         [
