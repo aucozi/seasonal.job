@@ -18,9 +18,8 @@ function catalog_seed(): array
             'edition_size' => 33,
             'image' => 'img/lithusa-tee.jpg',
             'gallery' => [
-                'img/lithusa-tee-held.jpg',
-                'img/lithusa-tee-folded.jpg',
                 'img/lithusa-tee-back.jpg',
+                'img/lithusa-tee-folded.jpg',
                 'img/lithusa-tee-tag-front.jpg',
                 'img/lithusa-tee-tag-back.jpg',
             ],

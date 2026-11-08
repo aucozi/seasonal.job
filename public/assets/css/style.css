@@ -161,6 +161,10 @@ input.qty, .signup input, .admin input[type="password"], .admin input:not([type]
 .hang-tag-warning { margin: 0; padding: 10px 12px; border: 1px solid #111; font: 0.9rem/1.4 Georgia, "Times New Roman", serif; }
 .hang-tag-warning strong { font-family: var(--font); text-transform: uppercase; letter-spacing: 0.04em; }
 
+.size-table { width: 100%; max-width: 480px; border-collapse: collapse; margin: 8px 0 12px; }
+.size-table th, .size-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.size-table th { font: 500 0.75rem var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+
 /* Footer */
 .site-footer { border-top: 1px solid var(--line); padding: 56px 0 32px; }
 .footer-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; }
