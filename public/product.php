@@ -61,8 +61,9 @@ render('header', [
         <p><?= e($paragraph) ?></p>
       <?php endforeach; ?>
     </div>
+    <?php render('hang-tag'); ?>
     <ul class="facts meta">
-      <li>Original tags and packaging</li>
+      <li>Original hang tag from the fair run</li>
       <li>Numbered card out of <?= (int) $product['edition_size'] ?></li>
       <li>Ships from the US within 2 business days</li>
       <li>Shipping <?= money((int) config('shipping.flat_cents', 600)) ?> · free over <?= money((int) config('shipping.free_over_cents', 6500)) ?></li>

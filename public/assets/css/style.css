@@ -112,6 +112,7 @@ p { margin: 0 0 1em; }
 /* Product page */
 .product { display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; padding-top: 40px; padding-bottom: 96px; }
 .product-media { align-self: start; display: grid; gap: 16px; }
+.product-info { position: sticky; top: 84px; align-self: start; }
 .product-media img { width: 100%; aspect-ratio: 1; object-fit: cover; border: 1px solid var(--line); background: var(--bg-raised); }
 .price.big { font-size: 1.6rem; font-weight: 500; margin: 0 0 4px; }
 .buy { margin: 28px 0 32px; }
@@ -153,6 +154,13 @@ input.qty, .signup input, .admin input[type="password"], .admin input:not([type]
 .prose li { margin-bottom: 0.6em; color: #cfc8bc; }
 .prose p { color: #cfc8bc; }
 
+/* Hang tag copy, set like the printed tag */
+.hang-tag { margin: 28px 0 0; padding: 22px 22px 18px; background: #f2eee7; color: #111; border-radius: 4px; max-width: 420px; }
+.hang-tag-for { font: italic 700 0.95rem var(--font); text-decoration: underline; text-underline-offset: 3px; margin: 0 0 8px; }
+.hang-tag-list { list-style: none; margin: 0 0 14px; padding: 8px 12px; border: 1px solid #111; font: italic 700 1.05rem/1.45 var(--font); letter-spacing: 0.01em; }
+.hang-tag-warning { margin: 0; padding: 10px 12px; border: 1px solid #111; font: 0.9rem/1.4 Georgia, "Times New Roman", serif; }
+.hang-tag-warning strong { font-family: var(--font); text-transform: uppercase; letter-spacing: 0.04em; }
+
 /* Footer */
 .site-footer { border-top: 1px solid var(--line); padding: 56px 0 32px; }
 .footer-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; }
@@ -183,6 +191,7 @@ form.inline { display: inline; }
 
 @media (max-width: 820px) {
   .product, .story-grid, .footer-grid, .admin-columns { grid-template-columns: 1fr; gap: 32px; }
+  .product-info { position: static; }
   .product-media { grid-auto-flow: column; grid-auto-columns: 86%; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; }
   .product-media img { scroll-snap-align: start; }
   .product-media:has(> img:only-child) { grid-auto-columns: 100%; }

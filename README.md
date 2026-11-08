@@ -38,12 +38,11 @@ The shop at shop.benzilinskas.com. Phase 1 sells the LITHUSA First Edition (33 t
 
 ## Photos
 
-The tee uses real photos: `lithusa-tee.jpg` (flat lay) and `lithusa-tee-held.jpg`. These placeholders in `public/assets/img/` still need replacing:
+All product photos are in `public/assets/img/` and listed per product in `src/catalog.php` (`image` is the main photo, `gallery` the rest). The hat and tag photos are composited onto a light backdrop so black hats stay visible on the dark site. `og.jpg` is the link preview on Instagram and iMessage.
 
-- `hero.svg`: the big image at the top of the home page. Use a wide photo (e.g. 2400×1350) and change the filename in `public/index.php`.
-- `lithusa-trucker.svg`, `lithusa-cap.svg`: the hat images.
+One placeholder is left: `hero.svg`, the big image at the top of the home page. Use a wide photo (e.g. 2400×1350) and change the filename in `public/index.php`.
 
-Product photos should be square (e.g. 1600×1600). To use a JPG, upload it and set the product's `image` column in phpMyAdmin (e.g. `img/lithusa-cap.jpg`). Extra photos go in the `gallery` column as a comma-separated list. They show under the main photo on the product page, and the first one appears when someone hovers over the product in the shop. A 1200×630 `og.jpg` in the same folder becomes the link preview on Instagram and iMessage.
+To change photos after the database is installed, edit the `image` and `gallery` columns of the `products` table in phpMyAdmin. `gallery` is a comma-separated list of files.
 
 ## Selling outside the site
 
