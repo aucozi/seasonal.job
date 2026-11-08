@@ -162,7 +162,9 @@ add_shortcode('sj_product', function (): string {
     $form = (string) ob_get_clean();
 
     $subtitle = $size ? "First Edition · $size made · $left left" : "$left left";
-    $sizeGuide = $product->is_type('variable') ? '<p class="sj-small sj-size-guide"><a href="' . esc_url(sj_page_url('size-guide')) . '">Size guide</a></p>' : '';
+    $sizeGuide = $product->is_type('variable')
+        ? '<p class="sj-small sj-size-guide">Size · <a href="' . esc_url(sj_page_url('size-guide')) . '">size guide</a></p>'
+        : '<p class="sj-small sj-size-guide">One size</p>';
     $buy = $left > 0
         ? '<div class="sj-buy">' . $sizeGuide . $form . '</div>'
         : '<p class="sj-notice">All ' . ($size ?: '') . ' are gone. Join the list below to hear about Edition 02.</p>';
