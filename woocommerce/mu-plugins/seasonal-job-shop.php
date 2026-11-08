@@ -175,3 +175,45 @@ add_action('admin_post_sj_signups_csv', function (): void {
     }
     exit;
 });
+
+/* ---------------------------------------------------------------------------------------
+ * WooCommerce → Edition numbers: see and set the next number for each First Edition run,
+ * e.g. back to 1 after a refunded test order, or past pieces sold by hand at an event.
+ * ------------------------------------------------------------------------------------- */
+
+add_action('admin_menu', function (): void {
+    add_submenu_page('woocommerce', 'Edition numbers', 'Edition numbers', 'manage_woocommerce', 'sj-editions', 'sj_editions_page');
+}, 61);
+
+function sj_editions_page(): void
+{
+    $sizes = sj_edition_sizes();
+    $saved = false;
+    if (isset($_POST['sj_next']) && check_admin_referer('sj_editions')) {
+        foreach ((array) $_POST['sj_next'] as $productId => $next) {
+            $productId = (int) $productId;
+            if (isset($sizes[$productId])) {
+                add_option('sj_edition_next_' . $productId, '1', '', false);
+                update_option('sj_edition_next_' . $productId, (string) max(1, (int) $next), false);
+            }
+        }
+        $saved = true;
+    }
+    echo '<div class="wrap"><h1>Edition numbers</h1>';
+    if ($saved) {
+        echo '<div class="notice notice-success"><p>Saved.</p></div>';
+    }
+    echo '<p>Each paid order gives its First Edition pieces the next numbers automatically. They show on the order as '
+        . '"Edition number", and that is what you write on the card. Change a number here only to undo a test order '
+        . 'or to skip numbers you handed out yourself.</p>';
+    echo '<form method="post">';
+    wp_nonce_field('sj_editions');
+    echo '<table class="widefat striped" style="max-width:640px"><thead><tr><th>Product</th><th>Made</th><th>Next number</th></tr></thead><tbody>';
+    foreach ($sizes as $productId => $size) {
+        $product = wc_get_product($productId);
+        $next = (int) get_option('sj_edition_next_' . $productId, 1);
+        echo '<tr><td>' . esc_html($product ? wp_strip_all_tags($product->get_name()) : '#' . $productId) . '</td><td>' . (int) $size . '</td>'
+            . '<td><input type="number" min="1" name="sj_next[' . (int) $productId . ']" value="' . $next . '" style="width:90px"></td></tr>';
+    }
+    echo '</tbody></table><p><button class="button button-primary" type="submit">Save</button></p></form></div>';
+}

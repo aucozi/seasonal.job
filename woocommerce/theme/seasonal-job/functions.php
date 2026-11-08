@@ -123,7 +123,7 @@ add_shortcode('sj_shop_home', function (): string {
     return (string) wc_print_notices(true)
         . '<h1 class="sj-page-title">First Edition</h1>'
         . '<p class="sj-lede">LITHUSA, the original fair run. ' . ($made ?: '') . ' pieces with their original hang tags, each shipped with a numbered card. When they\'re gone, they\'re gone.</p>'
-        . '<p class="sj-small">Ships from the US · ' . sj_money($flat) . ' shipping, free over ' . sj_money($free) . '</p>'
+        . '<p class="sj-small">Ships from Texas · US ' . sj_money($flat) . ', free over ' . sj_money($free) . ' · worldwide from $25</p>'
         . '<div class="sj-grid">' . $cards . '</div>';
 });
 
@@ -172,8 +172,8 @@ add_shortcode('sj_product', function (): string {
     $facts = '<ul class="sj-facts sj-small">'
         . '<li>Original hang tag from the fair run</li>'
         . ($size ? '<li>Numbered card out of ' . $size . '</li>' : '')
-        . '<li>Ships from the US within 2 business days</li>'
-        . '<li>Shipping $6, free over $65</li>'
+        . '<li>Ships from Texas within 2 business days</li>'
+        . '<li>US shipping $6, free over $65 · worldwide from $25</li>'
         . '</ul>';
 
     return (string) wc_print_notices(true)
