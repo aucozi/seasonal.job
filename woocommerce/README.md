@@ -1,0 +1,24 @@
+# WooCommerce shop (shop.benzilinskas.com)
+
+The live shop runs on WordPress + WooCommerce + WooPayments in `public_html/__shop` on Hostinger. These files are the customisations; everything else (products, stock, shipping, payments) is managed in WordPress or the Woo mobile app.
+
+## mu-plugins/ → upload to `wp-content/mu-plugins/`
+
+Must-use plugins load automatically and can't be switched off by accident.
+
+- `seasonal-job-shop.php`
+  - **First Edition numbering:** as each order becomes paid, every piece gets its number, saved on the order line as "Edition number: No. 7 / 33". It shows in the order screen, the Woo app and the order emails. Write it on the card you pack. The runs are product 175 (tee, 33), 334 (trucker, 9) and 335 (cap, 22). Numbers count up per product and are never reused.
+  - **Free shipping:** when an order gets free shipping (from $65), the paid $6 rate is hidden.
+- `seasonal-job-style.php` + `seasonal-job-assets/`: the benzilinskas.com look (Albura font, `#f5f3f1` paper, black ink) on top of the Twenty Twenty-Four theme.
+
+## backup-2026-11-08/
+
+The products as they were before the First Edition setup: raw data, photos and a readable summary.
+
+## Store setup done on Nov 8, 2026
+
+- **Tee (product 175):** $40; stock S 4, M 10, L 12, XL 4, 2XL 3; 3XL removed.
+- **Hats:** LITHUSA Trucker Hat (334), $32, 9 in stock; LITHUSA Cap (335), $30, 22 in stock.
+- **Shipping:** US only; "United States" zone with $6 flat rate and free shipping from $65.
+- **Payments:** WooPayments with Apple Pay and Google Pay; direct bank transfer off.
+- **Visibility:** still in "Coming soon" mode, with the private preview link turned on.

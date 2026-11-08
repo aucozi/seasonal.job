@@ -1,0 +1,78 @@
+/* benzilinskas.com look for the shop: same Albura font and paper colours as the main site's Bibliophile theme. */
+@font-face { font-family: "Albura"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/albura_normal_400.otf") format("opentype"); }
+@font-face { font-family: "Albura"; font-style: italic; font-weight: 400; font-display: swap; src: url("fonts/albura_italic_400.otf") format("opentype"); }
+@font-face { font-family: "Albura"; font-style: normal; font-weight: 545 700; font-display: swap; src: url("fonts/albura_normal_545.otf") format("opentype"); }
+
+/* Twenty Twenty-Four reads its colours and fonts from these presets; "html body" outranks the theme's own "body" rule. */
+html body {
+  --wp--preset--color--base: #f5f3f1;
+  --wp--preset--color--base-2: #edebe9;
+  --wp--preset--color--contrast: #000000;
+  --wp--preset--color--contrast-2: #6d6466;
+  --wp--preset--color--contrast-3: #6d6466;
+  --wp--preset--color--accent: #edebe9;
+  --wp--preset--font-family--body: "Albura", Georgia, "Times New Roman", serif;
+  --wp--preset--font-family--heading: "Albura", Georgia, "Times New Roman", serif;
+  --wp--preset--font-family--system-sans-serif: "Albura", Georgia, "Times New Roman", serif;
+  background: #f5f3f1;
+  color: #000;
+  font-family: "Albura", Georgia, "Times New Roman", serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+html body h1, html body h2, html body h3, html body h4,
+html body .wp-block-post-title, html body .wp-block-site-title {
+  font-family: "Albura", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: normal;
+}
+html body h1, html body .wc-block-components-product-name { font-style: italic; }
+
+/* Site title in the header, like BENZILINSKAS.COM on the main site. */
+html body .wp-block-site-title { font-size: 16px; font-weight: 700; text-transform: uppercase; }
+html body .wp-block-site-title a { text-decoration: none; }
+
+/* Links underlined like the main site. */
+html body a { color: #000; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+html body .wp-block-navigation a, html body .wp-block-site-title a,
+html body .wc-block-components-product-name, html body .wp-block-post-title a { text-decoration-thickness: 1px; }
+
+/* Buttons: black ink on paper, square corners. */
+html body .wp-element-button,
+html body .wp-block-button__link,
+html body .wc-block-components-button:not(.is-link),
+html body .single_add_to_cart_button,
+html body .button {
+  background: #000;
+  color: #f5f3f1;
+  border: 1px solid #000;
+  border-radius: 0;
+  font-family: "Albura", Georgia, serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 15px;
+}
+html body .wp-element-button:hover,
+html body .wp-block-button__link:hover,
+html body .wc-block-components-button:not(.is-link):hover,
+html body .single_add_to_cart_button:hover,
+html body .button:hover { background: #f5f3f1; color: #000; }
+
+/* Inputs and size selectors. */
+html body input[type="text"], html body input[type="email"], html body input[type="tel"],
+html body input[type="number"], html body select, html body textarea,
+html body .wc-block-components-text-input input {
+  background: transparent;
+  border: 1px solid #000;
+  border-radius: 0;
+  font-family: "Albura", Georgia, serif;
+}
+
+/* Product photos sit on the main site's panel colour. */
+html body .wc-block-components-product-image, html body .woocommerce-product-gallery__image,
+html body .wp-block-woocommerce-product-image-gallery img, html body .wc-block-grid__product-image img,
+html body .wp-block-post-featured-image img { background: #edebe9; }
+
+/* Prices and small print in the main site's muted ink. */
+html body .wc-block-components-product-price, html body .price { color: #000; font-family: "Albura", Georgia, serif; }
+html body .wc-block-components-product-metadata, html body .woocommerce-product-details__short-description { color: #6d6466; }

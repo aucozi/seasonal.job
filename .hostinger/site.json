@@ -1,6 +1,7 @@
 {
   "domain": "shop.benzilinskas.com",
   "username": "u366317653",
-  "type": "php",
-  "root_directory": "public_html/__shopsite"
+  "type": "wordpress",
+  "root_directory": "public_html/__shop",
+  "note": "WooCommerce site. Customisations live in woocommerce/mu-plugins and are uploaded to wp-content/mu-plugins. Do not remove or re-add the shop subdomain: Hostinger deletes databases when a subdomain is removed."
 }
