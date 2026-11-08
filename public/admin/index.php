@@ -199,7 +199,7 @@ function admin_start(string $title): void
     $adminUrl = url('admin/');
     ?><!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex"><title><?= e($title) ?> — seasonal.job admin</title>
+<meta name="robots" content="noindex"><title><?= e($title) ?> — seasonal job shop admin</title>
 <link rel="stylesheet" href="<?= e(asset('css/style.css')) ?>"></head>
 <body class="admin">
 <header class="site-header"><div class="wrap bar">
