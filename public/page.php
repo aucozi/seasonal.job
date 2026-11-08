@@ -16,8 +16,8 @@ if (!isset($pages[$slug])) {
 
 render('header', ['title' => $pages[$slug]]);
 ?>
-<main class="wrap narrow prose">
-  <h1><?= e($pages[$slug]) ?></h1>
+<h1 class="page-title"><?= e($pages[$slug]) ?></h1>
+<div class="prose">
   <?php render('pages/' . $slug); ?>
-</main>
+</div>
 <?php render('footer');

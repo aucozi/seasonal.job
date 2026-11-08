@@ -203,7 +203,7 @@ function admin_start(string $title): void
 <link rel="stylesheet" href="<?= e(asset('css/style.css')) ?>"></head>
 <body class="admin">
 <header class="site-header"><div class="wrap bar">
-  <a class="wordmark" href="<?= e($adminUrl) ?>">seasonal.job <span class="meta">admin</span></a>
+  <a class="wordmark" href="<?= e($adminUrl) ?>">seasonal job <span class="meta">shop admin</span></a>
   <?php if (!empty($_SESSION['admin'])): ?>
   <nav class="nav">
     <a href="<?= e($adminUrl) ?>">Orders</a><a href="?view=stock">Stock</a><a href="?view=signups">Drop list</a>

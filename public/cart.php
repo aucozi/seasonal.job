@@ -51,11 +51,11 @@ $freeOver = (int) config('shipping.free_over_cents', 6500);
 
 render('header', ['title' => 'Cart']);
 ?>
-<main class="wrap narrow cart">
-  <h1>Cart</h1>
+<div class="cart">
+  <h1 class="page-title">Cart</h1>
   <?php if (!$lines): ?>
     <p>Your cart is empty.</p>
-    <p><a class="btn" href="<?= e(url('#shop')) ?>">Shop the First Edition</a></p>
+    <p><a href="<?= e(url()) ?>">Shop the First Edition</a></p>
   <?php else: ?>
     <form method="post" action="<?= e(url('cart.php')) ?>" class="cart-lines">
       <?= csrf_field() ?>
@@ -65,7 +65,7 @@ render('header', ['title' => 'Cart']);
           <img src="<?= e(asset($line['image'])) ?>" alt="">
           <div class="line-info">
             <a href="<?= e(url('product.php?p=' . $line['slug'])) ?>"><?= e($line['name']) ?></a>
-            <p class="meta"><?= e($line['label']) ?> · <?= money((int) $line['unit_cents']) ?></p>
+            <p class="small"><?= e($line['label']) ?> · <?= money((int) $line['unit_cents']) ?></p>
           </div>
           <label class="sr-only" for="qty-<?= (int) $line['variant_id'] ?>">Quantity</label>
           <input class="qty" id="qty-<?= (int) $line['variant_id'] ?>" type="number" name="qty[<?= (int) $line['variant_id'] ?>]"
@@ -82,14 +82,14 @@ render('header', ['title' => 'Cart']);
       <dt class="grand">Total</dt><dd class="grand"><?= money($totals['total']) ?></dd>
     </dl>
     <?php if ($totals['shipping'] > 0): ?>
-      <p class="meta">Add <?= money($freeOver - $totals['subtotal']) ?> more for free shipping.</p>
+      <p class="small">Add <?= money($freeOver - $totals['subtotal']) ?> more for free shipping.</p>
     <?php endif; ?>
 
     <form method="post" action="<?= e(url('checkout.php')) ?>">
       <?= csrf_field() ?>
       <button class="btn wide" type="submit">Check out</button>
     </form>
-    <p class="meta">Secure payment by Stripe. Ships to US addresses only. Your pieces are held for 30 minutes while you pay.</p>
+    <p class="small">Secure payment by Stripe. Ships to US addresses only. Your pieces are held for 30 minutes while you pay.</p>
   <?php endif; ?>
-</main>
+</div>
 <?php render('footer');

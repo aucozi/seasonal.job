@@ -2,7 +2,9 @@
 // Copy this file to config.php and fill it in. config.php holds secrets: never commit or share it.
 return [
     'site_url' => 'https://shop.benzilinskas.com',
-    'instagram_url' => 'https://www.instagram.com/seasonal.job/',
+    'main_site_url' => 'https://benzilinskas.com',
+    'instagram_url' => 'https://instagram.com/seasonal.job',
+    'spotify_url' => 'https://open.spotify.com/artist/2Cdr4xt4kY61ECVbILaAFp',
     'timezone' => 'America/Chicago',
 
     // Hostinger hPanel → Databases → MySQL Databases. The host is usually localhost.

@@ -9,6 +9,6 @@
     <tr><td>2XL</td><td>26"</td><td>32½"</td></tr>
   </tbody>
 </table>
-<p class="meta">Manufacturer's garment measurements in inches, ±1". Chest is measured flat, 1" below the armhole. Length is measured at the back, from the high point of the shoulder to the hem. Compare with a tee you already own, laid flat.</p>
+<p class="small">Manufacturer's garment measurements in inches, ±1". Chest is measured flat, 1" below the armhole. Length is measured at the back, from the high point of the shoulder to the hem. Compare with a tee you already own, laid flat.</p>
 <p>Hats are one size with an adjustable back: a snapback on the trucker, a hook-and-loop strap on the cap.</p>
 <p>Still not sure? Send a DM to <a href="<?= e(config('instagram_url')) ?>" rel="noopener">@seasonal.job</a>.</p>

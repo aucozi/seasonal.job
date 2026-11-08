@@ -36,11 +36,11 @@ The shop at shop.benzilinskas.com. Phase 1 sells the LITHUSA First Edition (33 t
    2. Add a live-mode webhook with the same URL and events, and use its signing secret.
    3. In `/admin/` under Stock, set the counts back to the real numbers.
 
-## Photos
+## Look and photos
 
-All product photos are in `public/assets/img/` and listed per product in `src/catalog.php` (`image` is the main photo, `gallery` the rest). The hat and tag photos are composited onto a light backdrop so black hats stay visible on the dark site. `og.jpg` is the link preview on Instagram and iMessage.
+The shop follows benzilinskas.com: the Albura font from its WordPress theme (in `public/assets/fonts/`), the same off-white paper colour, and the same left-column layout with links back to the main site.
 
-One placeholder is left: `hero.svg`, the big image at the top of the home page. Use a wide photo (e.g. 2400×1350) and change the filename in `public/index.php`.
+Product photos are in `public/assets/img/` and listed per product in `src/catalog.php` (`image` is the main photo, `gallery` the rest). Hat and tag photos sit on the main site's panel colour (#edebe9). `og.jpg` is the link preview on Instagram and iMessage.
 
 To change photos after the database is installed, edit the `image` and `gallery` columns of the `products` table in phpMyAdmin. `gallery` is a comma-separated list of files.
 

@@ -112,7 +112,7 @@ function not_found(): never
 {
     http_response_code(404);
     render('header', ['title' => 'Not found']);
-    echo '<main class="wrap narrow"><h1>Not found</h1><p><a href="' . e(url()) . '">Back to the shop</a></p></main>';
+    echo '<h1 class="page-title">Not found</h1><p><a href="' . e(url()) . '">Back to the shop</a></p>';
     render('footer');
     exit;
 }
