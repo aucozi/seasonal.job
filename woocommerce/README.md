@@ -31,4 +31,6 @@ The products as they were before the First Edition setup: raw data, photos and a
 - **Payments:** WooPayments with Apple Pay and Google Pay; direct bank transfer off.
 - **Visibility:** still in "Coming soon" mode, with the private preview link turned on.
 - **Pages:** About, Size guide, Shipping and Returns created for the menu.
+- **WooPayments express buttons** (WooPay, Apple Pay, Google Pay): "light-outline" theme, square corners, large size, so they sit under the black Add to cart button.
+- **Printify Shipping Method plugin:** deactivated for the First Edition run, because it overrode the $6 rate. Turn it back on for Printify products.
 - **Product template:** the customised WooCommerce single-product template was cleared so the theme's product page shows. The old version is saved in `backup-2026-11-08/site/single-product.html`.

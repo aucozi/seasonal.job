@@ -121,10 +121,16 @@ img { max-width: 100%; height: auto; }
 }
 .sj-buy .single_add_to_cart_button:hover, .wp-element-button:hover, .button:hover { background: var(--sj-bg) !important; color: var(--sj-ink) !important; }
 .sj-buy .single_add_to_cart_button.disabled { opacity: 0.4; }
-/* One full-width black button; express checkout (WooPay, Apple Pay, Google Pay) stays in the cart and checkout. */
-.sj-buy .woocommerce-variation-add-to-cart, .sj-buy form.cart:not(.variations_form) { display: flex; flex-direction: column; align-items: stretch; gap: 0; margin-top: 18px; }
-.sj-buy .single_add_to_cart_button { width: 100%; padding: 16px 26px !important; font-size: 16px !important; }
-.sj-buy .wcpay-express-checkout-wrapper, .sj-buy #wcpay-express-checkout-element, .sj-buy #wcpay-woopay-button, .sj-buy .wcpay-payment-request-wrapper { display: none !important; }
+/* Two stacked, equal buttons: solid black Add to cart, then the outlined express checkout
+   (WooPay, Apple Pay, Google Pay: "light-outline", square, large in WooPayments settings). */
+.sj-buy .woocommerce-variation-add-to-cart, .sj-buy form.cart:not(.variations_form) { display: flex; flex-direction: column; align-items: stretch; gap: 10px; margin-top: 18px; }
+.sj-buy .single_add_to_cart_button { width: 100%; height: 56px; padding: 0 26px !important; font-size: 16px !important; line-height: 1; }
+.sj-buy .wcpay-express-checkout-wrapper { width: 100%; margin: 12px 0 0 !important; padding: 0 !important; }
+.sj-buy .wcpay-express-checkout-wrapper > * + * { margin-top: 10px; }
+.sj-buy #wcpay-woopay-button, .sj-buy .woopay-express-button { width: 100% !important; border-radius: 0 !important; }
+.sj-buy .woopay-express-button { height: 56px !important; border: 1px solid var(--sj-ink) !important; box-shadow: none !important; }
+.sj-buy .woopay-express-button:hover { background: var(--sj-panel) !important; }
+.sj-buy .wcpay-express-checkout-wrapper .woocommerce-pay-express-separator, .sj-buy #wcpay-express-checkout-button-separator { display: none !important; }
 
 /* Hang tag copy in descriptions, set like the printed tag */
 .sj-description .sj-hang-tag { margin: 28px 0 0; padding: 20px 20px 16px; background: #fff; border: 1px solid var(--sj-ink); max-width: 420px; }
