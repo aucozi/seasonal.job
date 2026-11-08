@@ -102,7 +102,7 @@ add_shortcode('sj_shop_home', function (): string {
     $products = wc_get_products($ids ? ['include' => $ids, 'status' => 'publish', 'limit' => -1, 'orderby' => 'include']
         : ['status' => 'publish', 'limit' => -1, 'orderby' => 'menu_order', 'order' => 'ASC']);
     $made = array_sum($sizes);
-    $flat = 6;
+    $flat = 7;
     $free = 65;
 
     $cards = '';
@@ -173,7 +173,7 @@ add_shortcode('sj_product', function (): string {
         . '<li>Original hang tag from the fair run</li>'
         . ($size ? '<li>Numbered card out of ' . $size . '</li>' : '')
         . '<li>Ships from Texas within 2 business days</li>'
-        . '<li>US shipping $6, free over $65 · worldwide from $20</li>'
+        . '<li>US shipping $7, free over $65 · worldwide from $20</li>'
         . '</ul>';
 
     return (string) wc_print_notices(true)
