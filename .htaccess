@@ -1,0 +1,7 @@
+# Used when the subdomain's folder is this project's root rather than public/.
+Options -Indexes
+RewriteEngine On
+RewriteRule ^(src|storage|tests|\.git)(/|$) - [F,L]
+RewriteRule ^(config\.php|config\.example\.php|README\.md|\.gitignore)$ - [F,L]
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ /public/$1 [L]
