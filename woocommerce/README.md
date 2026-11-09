@@ -6,7 +6,11 @@ The live shop runs on WordPress + WooCommerce + WooPayments in `public_html/__sh
 
 The active theme: a child of Twenty Twenty-Four with the same design as the custom shop and benzilinskas.com. It has the left column with the menu, the two-column product grid with "X of 33 left", the product page with photo thumbnails and size buttons, the hang-tag box, and the "Next drop" signup.
 - **Templates:** thin wrappers; `functions.php` draws the markup.
-- **Add-to-cart, cart and checkout:** WooCommerce's own, so stock, WooPayments and the Woo app work as normal.
+- **Add-to-cart, cart and checkout:** WooCommerce's own, so stock, WooPayments and the Woo app work as normal. On top of that:
+  - an "Added to cart" panel (bottom sheet on phones, card top right on desktop) with Checkout / View cart / Keep shopping;
+  - a fixed "Add to cart · $40 · M" bar on phones while the real button is off screen;
+  - our own `page-checkout`, `page-cart` and `order-confirmation` templates, so these pages keep the left column and margins, with a "What happens next" list after ordering;
+  - attribute labels shown singular ("Size: M", not "Sizes: M").
 - **Order emails:** `woocommerce/emails/email-header.php` and `email-footer.php`, plus the `woocommerce_email_styles` filter in `functions.php`, give every WooCommerce email the shop's look: the "seasonal job" header, paper background, Albura with Georgia as fallback, italic headings, thin black rules, and Instagram/Spotify links in the footer. Subjects, headings and closing text are set in WooCommerce → Settings → Emails.
 - **To undo:** activate Twenty Twenty-Four in Appearance → Themes.
 
@@ -16,8 +20,11 @@ Must-use plugins load automatically and can't be switched off by accident.
 
 - `seasonal-job-shop.php`
   - **First Edition numbering:** as each order becomes paid, every piece gets its number, saved on the order line as "Edition number: No. 7 / 33". It shows in the order screen, the Woo app and the order emails. Write it on the card you pack. The runs are product 175 (tee, 33), 334 (trucker, 9) and 335 (cap, 22). Numbers count up per product and are never reused.
-  - **Free shipping:** when an order gets free shipping (from $65), the paid $6 rate is hidden.
-- **Drop list:** the `[sj_signup]` "Next drop" form saves emails to their own table. **WooCommerce → Drop list** shows them and downloads a CSV.
+  - **Free shipping:** when an order gets free shipping (from $65), the paid $7 rate is hidden.
+  - **Shipping waits for the address:** the country defaults to the US, but no rate (and no "free shipping") shows until an address is entered. Countries without states (Lithuania, most of Europe) don't ask for one; WooCommerce's default asked, so their shipping never calculated.
+  - **Pay in Person is app-only:** the cash-on-delivery gateway titled "Pay in Person" stays on for Woo app sales but is hidden from the website cart and checkout.
+  - **Drop list:** the `[sj_signup]` "Next drop" form saves emails to their own table and sends a branded "You're on the list" email. It confirms on the page without reloading. The checkout has an "Email me before the next drop" box; ticked, the buyer joins the list once the order is paid. **WooCommerce → Drop list** shows the list and downloads a CSV.
+  - **REST (shop managers, Application Password):** `GET/POST /wp-json/sj/v1/editions` reads or sets the next edition number per product, e.g. `{"next":{"175":1}}` to reset after a test order. `GET /wp-json/sj/v1/signups` lists the drop list, and `DELETE /wp-json/sj/v1/signups?email=…` takes someone off.
 - `seasonal-job-style.php` + `seasonal-job-assets/`: a lighter restyle, used only if Twenty Twenty-Four itself is active again.
 
 ## backup-2026-11-08/

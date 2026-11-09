@@ -100,14 +100,21 @@ function sj_signups_install(): void
     update_option('sj_signups_db', '1', false);
 }
 
+const SJ_SIGNUP_MESSAGES = [
+    'ok' => 'You’re on the list. Check your inbox for a confirmation.',
+    'already' => 'You’re already on the list. We’ll email you before the next drop.',
+    'bad' => 'That email address doesn’t look right. Try again?',
+];
+
 add_shortcode('sj_signup', function (): string {
     $status = sanitize_key($_GET['sj_signup'] ?? '');
-    $message = ['ok' => 'You’re on the list. We’ll email you before the next drop.', 'bad' => 'That email address doesn’t look right. Try again?'][$status] ?? '';
+    $message = SJ_SIGNUP_MESSAGES[$status] ?? '';
     $back = remove_query_arg('sj_signup', home_url(wp_unslash($_SERVER['REQUEST_URI'] ?? '/')));
+    $done = in_array($status, ['ok', 'already'], true);
     return '<h2 id="sj-next-drop">Next drop</h2>'
         . '<p>Edition 02 and new designs are coming, shipping to the US and Europe. Get the link a day early.</p>'
-        . ($message ? '<p class="sj-signup-msg" role="status">' . esc_html($message) . '</p>' : '')
-        . '<form class="sj-signup" method="post" action="' . esc_url(admin_url('admin-post.php')) . '">'
+        . '<div class="sj-signup-msg' . ($done ? ' is-done' : '') . ($status === 'bad' ? ' is-error' : '') . '" role="status" aria-live="polite"' . ($message ? '' : ' hidden') . '>' . esc_html($message) . '</div>'
+        . '<form class="sj-signup" method="post" action="' . esc_url(admin_url('admin-post.php')) . '"' . ($done ? ' hidden' : '') . ' data-sj-signup>'
         . '<input type="hidden" name="action" value="sj_signup">'
         . '<input type="hidden" name="back" value="' . esc_attr($back) . '">'
         . '<label class="sj-hp" aria-hidden="true">Leave empty <input type="text" name="website" tabindex="-1" autocomplete="off"></label>'
@@ -117,30 +124,130 @@ add_shortcode('sj_signup', function (): string {
         . '</form>';
 });
 
-function sj_handle_signup(): void
+/** Adds an email to the drop list and sends the welcome email. Returns 'ok', 'already' or 'bad'. */
+function sj_add_signup(string $email): string
 {
-    $back = wp_validate_redirect(wp_unslash($_POST['back'] ?? ''), home_url('/'));
-    if (!empty($_POST['website'])) { // Filled-in honeypot: a bot.
-        wp_safe_redirect($back);
-        exit;
-    }
-    $email = sanitize_email(wp_unslash($_POST['email'] ?? ''));
+    $email = strtolower(sanitize_email($email));
     if (!is_email($email)) {
-        wp_safe_redirect(add_query_arg('sj_signup', 'bad', $back) . '#sj-next-drop');
-        exit;
+        return 'bad';
     }
     sj_signups_install();
     global $wpdb;
-    $wpdb->query($wpdb->prepare(
+    $added = $wpdb->query($wpdb->prepare(
         'INSERT IGNORE INTO ' . sj_signups_table() . ' (email, created_at) VALUES (%s, %s)',
-        strtolower($email),
+        $email,
         current_time('mysql')
     ));
-    wp_safe_redirect(add_query_arg('sj_signup', 'ok', $back) . '#sj-next-drop');
+    if (!$added) {
+        return 'already';
+    }
+    sj_send_signup_email($email);
+    return 'ok';
+}
+
+/** "You're on the list" email, in the same branded wrapper as the order emails. */
+function sj_send_signup_email(string $email): void
+{
+    if (!function_exists('WC')) {
+        return;
+    }
+    $mailer = WC()->mailer();
+    $shop = esc_url(home_url('/'));
+    $body = '<p>Thanks for joining the seasonal job list.</p>'
+        . '<p>Edition 02 of LITHUSA and new designs are on the way, printed to order and shipped to the US and Europe. '
+        . 'You\'ll get the link a day before everyone else.</p>'
+        . '<p>Until then, the First Edition (the original fair run, numbered) is in the shop while it lasts: '
+        . '<a href="' . $shop . '">shop.benzilinskas.com</a>.</p>'
+        . '<p>Not you, or changed your mind? Reply to this email and we\'ll take you off the list.</p>';
+    $mailer->send($email, 'You’re on the seasonal job list', $mailer->wrap_message('You’re on the list', $body));
+}
+
+function sj_handle_signup(): void
+{
+    $ajax = !empty($_POST['ajax']);
+    $back = wp_validate_redirect(wp_unslash($_POST['back'] ?? ''), home_url('/'));
+    $status = !empty($_POST['website']) ? 'ok' : sj_add_signup(wp_unslash($_POST['email'] ?? '')); // Honeypot filled: a bot, answer as if fine.
+    if ($ajax) {
+        wp_send_json(['status' => $status, 'message' => SJ_SIGNUP_MESSAGES[$status]], $status === 'bad' ? 400 : 200);
+    }
+    wp_safe_redirect(add_query_arg('sj_signup', $status, $back) . '#sj-next-drop');
     exit;
 }
 add_action('admin_post_nopriv_sj_signup', 'sj_handle_signup');
 add_action('admin_post_sj_signup', 'sj_handle_signup');
+
+/** Checkout opt-in: "Email me before the next drop", saved with the order and added to the list once it's paid. */
+add_action('woocommerce_init', function (): void {
+    if (!function_exists('woocommerce_register_additional_checkout_field')) {
+        return;
+    }
+    woocommerce_register_additional_checkout_field([
+        'id' => 'seasonal-job/next-drop',
+        'label' => 'Email me before the next drop',
+        'location' => 'contact',
+        'type' => 'checkbox',
+    ]);
+});
+
+add_action('woocommerce_order_status_processing', function ($orderId): void {
+    $order = wc_get_order($orderId);
+    if ($order && $order->get_meta('_wc_other/seasonal-job/next-drop') && $order->get_billing_email()) {
+        sj_add_signup($order->get_billing_email());
+    }
+}, 20);
+
+/* REST: read and set the next edition numbers (shop managers only), e.g. to reset after a test order. */
+add_action('rest_api_init', function (): void {
+    register_rest_route('sj/v1', '/editions', [
+        [
+            'methods' => 'GET',
+            'permission_callback' => fn () => current_user_can('manage_woocommerce'),
+            'callback' => function (): array {
+                $out = [];
+                foreach (sj_edition_sizes() as $productId => $size) {
+                    $out[] = ['product_id' => $productId, 'made' => $size, 'next' => (int) get_option('sj_edition_next_' . $productId, 1)];
+                }
+                return $out;
+            },
+        ],
+        [
+            'methods' => 'POST',
+            'permission_callback' => fn () => current_user_can('manage_woocommerce'),
+            'callback' => function (WP_REST_Request $request): array {
+                $sizes = sj_edition_sizes();
+                foreach ((array) $request->get_param('next') as $productId => $next) {
+                    if (isset($sizes[(int) $productId])) {
+                        add_option('sj_edition_next_' . (int) $productId, '1', '', false);
+                        update_option('sj_edition_next_' . (int) $productId, (string) max(1, (int) $next), false);
+                    }
+                }
+                return ['saved' => true];
+            },
+        ],
+    ]);
+    // The drop list: GET lists it, DELETE {email} takes someone off (an unsubscribe reply, or a test signup).
+    register_rest_route('sj/v1', '/signups', [
+        [
+            'methods' => 'GET',
+            'permission_callback' => fn () => current_user_can('manage_woocommerce'),
+            'callback' => function (): array {
+                sj_signups_install();
+                global $wpdb;
+                return $wpdb->get_results('SELECT email, created_at FROM ' . sj_signups_table() . ' ORDER BY id DESC', ARRAY_A);
+            },
+        ],
+        [
+            'methods' => 'DELETE',
+            'permission_callback' => fn () => current_user_can('manage_woocommerce'),
+            'callback' => function (WP_REST_Request $request): array {
+                sj_signups_install();
+                global $wpdb;
+                $email = strtolower(sanitize_email((string) $request->get_param('email')));
+                return ['deleted' => (int) $wpdb->delete(sj_signups_table(), ['email' => $email])];
+            },
+        ],
+    ]);
+});
 
 add_action('admin_menu', function (): void {
     add_submenu_page('woocommerce', 'Drop list', 'Drop list', 'manage_woocommerce', 'sj-drop-list', function (): void {
@@ -217,3 +324,27 @@ function sj_editions_page(): void
     }
     echo '</tbody></table><p><button class="button button-primary" type="submit">Save</button></p></form></div>';
 }
+
+/** Checkout starts on United States with no state picked, so nothing (shipping, tax) is guessed before the address. */
+add_filter('woocommerce_customer_default_location', fn () => 'US');
+
+// "Pay in Person" (cash on delivery) is for sales through the Woo app at events. Keep it out of the
+// website checkout, where it would let an order through without paying.
+add_filter('woocommerce_available_payment_gateways', function (array $gateways): array {
+    $storeApi = str_contains((string) ($_SERVER['REQUEST_URI'] ?? ''), '/wc/store/');
+    if (!is_admin() && ($storeApi || is_checkout() || is_cart())) {
+        unset($gateways['cod']);
+    }
+    return $gateways;
+});
+
+// Countries without states (Lithuania, most of Europe) must not ask for one. WooCommerce's default
+// locale marks the state required, so the address never counts as complete and no shipping rate shows.
+add_filter('woocommerce_get_country_locale', function (array $locale): array {
+    foreach (WC()->countries->get_countries() as $code => $name) {
+        if (empty(WC()->countries->get_states($code))) {
+            $locale[$code]['state'] = array_merge($locale[$code]['state'] ?? [], ['required' => false, 'hidden' => true]);
+        }
+    }
+    return $locale;
+});

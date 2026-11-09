@@ -91,6 +91,23 @@ add_shortcode('sj_footer', function (): string {
         . '</div>';
 });
 
+/** Footer for checkout and order confirmation: links and copyright, no signup form. */
+add_shortcode('sj_footer_min', function (): string {
+    $full = do_shortcode('[sj_footer]');
+    $start = strpos($full, '<div class="sj-foot">');
+    return $start === false ? $full : substr($full, $start);
+});
+
+/** Order confirmation: what happens next, in the shop's words. */
+add_shortcode('sj_order_next_steps', function (): string {
+    return '<div class="sj-next-steps"><h2>What happens next</h2><ol>'
+        . '<li>We pack your order by hand in Fort Worth within 2 business days.</li>'
+        . '<li>Each First Edition piece gets its number, written and signed on the hang tag.</li>'
+        . '<li>You get the tracking number by email when it ships.</li>'
+        . '</ol><p class="sj-small">Questions? Reply to your order email or send a DM to <a href="https://instagram.com/seasonal.job">@seasonal.job</a>.</p>'
+        . '<p><a href="' . esc_url(home_url('/')) . '">← Back to the shop</a></p></div>';
+});
+
 add_shortcode('sj_notices', function (): string {
     return function_exists('wc_print_notices') ? (string) wc_print_notices(true) : '';
 });
@@ -126,6 +143,40 @@ add_shortcode('sj_shop_home', function (): string {
         . '<p class="sj-small">Ships from Texas · US ' . sj_money($flat) . ', free over ' . sj_money($free) . ' · worldwide from $20</p>'
         . '<div class="sj-grid">' . $cards . '</div>';
 });
+
+/**
+ * "Added to cart" panel, shown right after the product form is submitted (in place of WooCommerce's notice):
+ * the piece, the cart subtotal, a Checkout button and a View cart link.
+ */
+function sj_added_panel(): string
+{
+    if (empty($_REQUEST['add-to-cart']) || !function_exists('WC') || !WC()->cart || wc_notice_count('error') > 0) {
+        return '';
+    }
+    $items = WC()->cart->get_cart();
+    if (!$items) {
+        return '';
+    }
+    wc_clear_notices();
+    $item = end($items);
+    $product = $item['data'];
+    $parent = $product->get_parent_id() ? wc_get_product($product->get_parent_id()) : $product;
+    $size = $item['variation']['attribute_sizes'] ?? ($item['variation']['attribute_pa_sizes'] ?? 'One size');
+    $count = WC()->cart->get_cart_contents_count();
+    $subtotal = sj_money((float) WC()->cart->get_subtotal());
+    return '<div class="sj-added" data-sj-added role="dialog" aria-modal="false" aria-labelledby="sj-added-title">'
+        . '<div class="sj-added-panel">'
+        . '<p class="sj-added-head"><span id="sj-added-title">✓ Added to cart</span>'
+        . '<button type="button" class="sj-added-close" data-sj-added-close aria-label="Close">×</button></p>'
+        . '<div class="sj-added-item">' . $product->get_image('woocommerce_thumbnail')
+        . '<div><p class="sj-added-name">' . esc_html(wp_strip_all_tags($parent->get_name())) . '</p>'
+        . '<p class="sj-small">' . esc_html($size) . ' · ' . esc_html(sj_money((float) $product->get_price())) . '</p></div></div>'
+        . '<p class="sj-added-subtotal"><span>Cart subtotal (' . (int) $count . ' ' . ($count === 1 ? 'item' : 'items') . ')</span><span>' . esc_html($subtotal) . '</span></p>'
+        . '<a class="sj-button" href="' . esc_url(wc_get_checkout_url()) . '">Checkout</a>'
+        . '<a class="sj-button sj-button-outline" href="' . esc_url(wc_get_cart_url()) . '">View cart</a>'
+        . '<button type="button" class="sj-added-continue" data-sj-added-close>Keep shopping</button>'
+        . '</div></div>';
+}
 
 /** Product page: title, price line, photos with thumbnails, WooCommerce's add-to-cart form, description and facts. */
 add_shortcode('sj_product', function (): string {
@@ -166,7 +217,7 @@ add_shortcode('sj_product', function (): string {
         ? '<p class="sj-small sj-size-guide">Size · <a href="' . esc_url(sj_page_url('size-guide')) . '">size guide</a></p>'
         : '<p class="sj-small sj-size-guide">One size</p>';
     $buy = $left > 0
-        ? '<div class="sj-buy">' . $sizeGuide . $form . '</div>'
+        ? '<div class="sj-buy" data-sj-buy data-price="' . esc_attr(sj_money((float) $product->get_price())) . '">' . $sizeGuide . $form . '</div>'
         : '<p class="sj-notice">All ' . ($size ?: '') . ' are gone. Join the list below to hear about Edition 02.</p>';
 
     $facts = '<ul class="sj-facts sj-small">'
@@ -176,7 +227,8 @@ add_shortcode('sj_product', function (): string {
         . '<li>US shipping $7, free over $65 · worldwide from $20</li>'
         . '</ul>';
 
-    return (string) wc_print_notices(true)
+    $added = sj_added_panel();
+    return $added . (string) wc_print_notices(true)
         . '<p class="sj-small sj-back"><a href="' . esc_url(home_url('/')) . '">← First Edition</a></p>'
         . '<h1 class="sj-page-title">' . esc_html($name) . '</h1>'
         . '<p class="sj-price-line">' . esc_html(sj_money((float) $product->get_price())) . ' <span>· ' . esc_html($subtitle) . '</span></p>'
@@ -250,3 +302,8 @@ body, #outer_wrapper, #wrapper, #inner_wrapper { background-color: #f5f3f1 !impo
 img { border: 0 !important; }
 ";
 }, 20);
+
+// The product attributes are named "Colors" and "Sizes"; show them singular in the cart, checkout and emails.
+add_filter('woocommerce_attribute_label', function (string $label): string {
+    return ['Colors' => 'Color', 'Sizes' => 'Size'][$label] ?? $label;
+});
