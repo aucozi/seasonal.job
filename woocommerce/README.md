@@ -7,6 +7,7 @@ The live shop runs on WordPress + WooCommerce + WooPayments in `public_html/__sh
 The active theme: a child of Twenty Twenty-Four with the same design as the custom shop and benzilinskas.com. It has the left column with the menu, the two-column product grid with "X of 33 left", the product page with photo thumbnails and size buttons, the hang-tag box, and the "Next drop" signup.
 - **Templates:** thin wrappers; `functions.php` draws the markup.
 - **Add-to-cart, cart and checkout:** WooCommerce's own, so stock, WooPayments and the Woo app work as normal.
+- **Order emails:** `woocommerce/emails/email-header.php` and `email-footer.php`, plus the `woocommerce_email_styles` filter in `functions.php`, give every WooCommerce email the shop's look: the "seasonal job" header, paper background, Albura with Georgia as fallback, italic headings, thin black rules, and Instagram/Spotify links in the footer. Subjects, headings and closing text are set in WooCommerce → Settings → Emails.
 - **To undo:** activate Twenty Twenty-Four in Appearance → Themes.
 
 ## mu-plugins/ → upload to `wp-content/mu-plugins/`

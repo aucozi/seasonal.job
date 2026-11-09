@@ -220,3 +220,33 @@ add_action('wp_head', function (): void {
     echo '<meta name="twitter:card" content="summary_large_image">' . "\n";
     echo '<meta name="description" content="' . esc_attr($description) . '">' . "\n";
 }, 5);
+
+/** Order emails in the shop's look: paper background, Albura/Georgia, italic headings, thin black rules. */
+add_filter('woocommerce_email_styles', function (string $css): string {
+    $serif = "Albura, Georgia, 'Times New Roman', serif";
+    return $css . "
+body, #outer_wrapper, #wrapper, #inner_wrapper { background-color: #f5f3f1 !important; }
+#wrapper { padding: 0 !important; max-width: 600px; }
+#template_container { background-color: #f5f3f1 !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+#template_header { background-color: #f5f3f1 !important; color: #000000 !important; border-radius: 0 !important; border: 0 !important; }
+#header_wrapper { padding: 24px 48px 0 !important; }
+#header_wrapper h1, #template_header h1 { font-family: $serif !important; font-style: italic; font-weight: 400 !important; font-size: 32px !important; line-height: 1.2 !important; color: #000000 !important; text-align: left !important; text-shadow: none !important; margin: 0 !important; }
+#template_body, #body_content { background-color: #f5f3f1 !important; }
+#body_content table > tbody > tr > td, #body_content_inner_cell { padding: 20px 48px 8px !important; }
+#body_content_inner, #body_content_inner p, #body_content_inner td, #body_content_inner th, #body_content_inner li { font-family: $serif !important; font-size: 17px !important; line-height: 1.55 !important; color: #000000 !important; }
+#body_content_inner h2, #body_content_inner h3 { font-family: $serif !important; font-style: italic; font-weight: 400 !important; font-size: 22px !important; color: #000000 !important; margin: 28px 0 10px !important; text-align: left !important; }
+#body_content_inner a, #credit a { color: #000000 !important; text-decoration: underline !important; }
+.sj-email-brand a { color: #000000 !important; text-decoration: none !important; }
+.td, #body_content_inner table.td, #body_content_inner table.td th, #body_content_inner table.td td { border: 0 !important; border-bottom: 1px solid #000000 !important; background: transparent !important; color: #000000 !important; padding: 10px 6px 10px 0 !important; }
+#body_content_inner table.td { border-top: 1px solid #000000 !important; }
+#body_content_inner table.td thead th { font-size: 14px !important; font-weight: 400 !important; color: #6d6466 !important; }
+#body_content_inner .wc-item-meta, #body_content_inner .wc-item-meta li, #body_content_inner .wc-item-meta p { font-size: 15px !important; color: #000000 !important; margin: 4px 0 0 !important; padding: 0 !important; list-style: none !important; }
+#body_content_inner .wc-item-meta strong { font-weight: 400 !important; color: #6d6466 !important; }
+#body_content_inner .wc-item-meta p { display: inline !important; }
+#body_content_inner address, .address { font-family: $serif !important; font-style: normal !important; color: #000000 !important; border: 1px solid #000000 !important; border-radius: 0 !important; padding: 12px 14px !important; background: transparent !important; }
+#body_content_inner .email-additional-content, #body_content_inner .email-additional-content p { color: #000000 !important; }
+#template_footer, #template_footer td, #credit { background-color: #f5f3f1 !important; border: 0 !important; }
+.email-order-item-meta, .email-order-detail-heading span { color: #6d6466 !important; }
+img { border: 0 !important; }
+";
+}, 20);
