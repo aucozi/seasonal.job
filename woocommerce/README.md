@@ -33,4 +33,11 @@ The products as they were before the First Edition setup: raw data, photos and a
 - **Pages:** About, Size guide, Shipping and Returns created for the menu.
 - **WooPayments express buttons** (WooPay, Apple Pay, Google Pay): "light-outline" theme, square corners, large size, so they sit under the black Add to cart button.
 - **Printify Shipping Method plugin:** deactivated for the First Edition run, because it overrode the $6 rate. Turn it back on for Printify products.
+- **Shop name:** "seasonal job" (site title, email sender, Coming soon page). Card statements show `SEASONAL JOB`. Order emails are styled black on off-white, the time zone is America/Chicago, and the tab icon is the LITHUSA flag.
+- **Store address:** Fort Worth, TX 76179. WooCommerce calculates Texas sales tax, including on shipping, for Texas orders.
+- **Shipping:**
+  - US: $7, free from $65.
+  - Lithuania and Europe: $20 + $5 per extra piece (Pirate Ship Simple Export Rate).
+  - Rest of world: $27 + $8.
+- **Privacy page:** rewritten. The old text is in `backup-2026-11-08/site/page-privacy-policy.html`.
 - **Product template:** the customised WooCommerce single-product template was cleared so the theme's product page shows. The old version is saved in `backup-2026-11-08/site/single-product.html`.

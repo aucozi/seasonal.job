@@ -17,7 +17,7 @@ defined('ABSPATH') || exit;
 function sj_edition_sizes(): array
 {
     return apply_filters('sj_edition_sizes', [
-        175 => 33, // "LITHUSA" T-Shirt
+        175 => 33, // LITHUSA Tee
         334 => 9,  // LITHUSA Trucker Hat
         335 => 22, // LITHUSA Cap
     ]);

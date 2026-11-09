@@ -185,3 +185,38 @@ add_shortcode('sj_product', function (): string {
         . '<div class="sj-description">' . apply_filters('the_content', $product->get_description()) . '</div>'
         . $facts;
 });
+
+/** Link previews (Instagram, iMessage, WhatsApp): title, description, photo and, on products, the price. */
+add_action('wp_head', function (): void {
+    $title = 'seasonal job — LITHUSA First Edition';
+    $description = 'The original LITHUSA fair run by Ben Zilinskas: 64 numbered pieces, shipped from Texas, worldwide.';
+    $url = is_singular() ? get_permalink() : home_url('/');
+    $image = '';
+    $price = '';
+    if (function_exists('is_product') && is_product() && ($product = wc_get_product(get_queried_object_id()))) {
+        $title = wp_strip_all_tags($product->get_name()) . ' — seasonal job';
+        $description = trim(wp_strip_all_tags($product->get_short_description())) ?: $description;
+        $image = (string) wp_get_attachment_image_url($product->get_image_id(), 'large');
+        $price = (string) $product->get_price();
+    }
+    if ($image === '' && ($sizes = sj_theme_edition_sizes()) && ($first = wc_get_product(array_key_first($sizes)))) {
+        $image = (string) wp_get_attachment_image_url($first->get_image_id(), 'large');
+    }
+    $tags = [
+        'og:site_name' => 'seasonal job',
+        'og:type' => $price !== '' ? 'product' : 'website',
+        'og:title' => $title,
+        'og:description' => $description,
+        'og:url' => $url,
+        'og:image' => $image,
+        'product:price:amount' => $price,
+        'product:price:currency' => $price !== '' ? get_woocommerce_currency() : '',
+    ];
+    foreach ($tags as $property => $content) {
+        if ($content !== '') {
+            echo '<meta property="' . esc_attr($property) . '" content="' . esc_attr($content) . '">' . "\n";
+        }
+    }
+    echo '<meta name="twitter:card" content="summary_large_image">' . "\n";
+    echo '<meta name="description" content="' . esc_attr($description) . '">' . "\n";
+}, 5);
