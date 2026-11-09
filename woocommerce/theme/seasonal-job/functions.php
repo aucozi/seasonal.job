@@ -65,7 +65,8 @@ add_shortcode('sj_sidebar', function (): string {
     foreach ($items as [$label, $href]) {
         $path = untrailingslashit((string) wp_parse_url($href, PHP_URL_PATH));
         $active = $path === $current || ($label === 'First Edition' && (is_front_page() || is_shop() || is_product()));
-        $nav .= '<a href="' . esc_url($href) . '"' . ($active ? ' aria-current="page"' : '') . '>' . esc_html($label) . '</a>';
+        $cartAttr = str_starts_with($label, 'Cart') ? ' data-sj-cart-link' : '';
+        $nav .= '<a href="' . esc_url($href) . '"' . $cartAttr . ($active ? ' aria-current="page"' : '') . '>' . esc_html($label) . '</a>';
     }
     return '<div class="sj-sidebar">'
         . '<p class="sj-site-name"><a href="' . esc_url(home_url('/')) . '">seasonal job</a></p>'
@@ -113,15 +114,13 @@ add_shortcode('sj_notices', function (): string {
 });
 
 /** Shop home: heading, intro and the two-column grid. */
-add_shortcode('sj_shop_home', function (): string {
+/** The First Edition product cards (photo, name, price and how many are left), as on the home page. */
+function sj_product_cards(): string
+{
     $sizes = sj_theme_edition_sizes();
     $ids = $sizes ? array_keys($sizes) : [];
     $products = wc_get_products($ids ? ['include' => $ids, 'status' => 'publish', 'limit' => -1, 'orderby' => 'include']
         : ['status' => 'publish', 'limit' => -1, 'orderby' => 'menu_order', 'order' => 'ASC']);
-    $made = array_sum($sizes);
-    $flat = 7;
-    $free = 65;
-
     $cards = '';
     foreach ($products as $product) {
         $left = sj_stock_left($product);
@@ -136,12 +135,33 @@ add_shortcode('sj_shop_home', function (): string {
             . '<span class="sj-card-meta">' . esc_html($meta) . '</span>'
             . '</a>';
     }
+    return '<div class="sj-grid">' . $cards . '</div>';
+}
+
+add_shortcode('sj_shop_home', function (): string {
+    $made = array_sum(sj_theme_edition_sizes());
+    $flat = 7;
+    $free = 65;
 
     return (string) wc_print_notices(true)
         . '<h1 class="sj-page-title">First Edition</h1>'
         . '<p class="sj-lede">LITHUSA, the first run. ' . ($made ?: '') . ' pieces with their original hang tags, each shipped with a numbered card. When they\'re gone, they\'re gone.</p>'
         . '<p class="sj-small">Ships from Texas · US ' . sj_money($flat) . ', free over ' . sj_money($free) . ' · worldwide from $20</p>'
-        . '<div class="sj-grid">' . $cards . '</div>';
+        . sj_product_cards();
+});
+
+/* Empty cart: a plain line and the product cards, instead of WooCommerce's sad face, dots and
+   "New in store". The block's own wrapper stays, so the cart still switches to it when emptied. */
+add_filter('render_block_woocommerce/empty-cart-block', function (string $html): string {
+    if (!preg_match('/^\s*(<div\b[^>]*>)/', $html, $m)) {
+        return $html;
+    }
+    $open = preg_replace('/class="/', 'class="sj-empty-cart ', $m[1], 1);
+    return $open
+        . '<p class="sj-lede">Your cart is empty.</p>'
+        . '<p class="sj-small">The First Edition is still here while it lasts.</p>'
+        . sj_product_cards()
+        . '</div>';
 });
 
 /**

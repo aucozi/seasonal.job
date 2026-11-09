@@ -175,3 +175,35 @@
     if (box && !box.checked) { box.click(); }
   }, 250);
 })();
+
+/* "Cart (2)" in the menu follows the cart when items are removed or changed on the cart and checkout
+   pages, which update without reloading. */
+(function () {
+  var link = document.querySelector('[data-sj-cart-link]');
+  if (!link) { return; }
+  function show(count) {
+    link.textContent = 'Cart' + (count > 0 ? ' (' + count + ')' : '');
+  }
+  function refetch() {
+    if (!window.fetch) { return; }
+    fetch('/wp-json/wc/store/v1/cart', { credentials: 'same-origin' })
+      .then(function (r) { return r.json(); })
+      .then(function (cart) { if (cart && typeof cart.items_count === 'number') { show(cart.items_count); } })
+      .catch(function () {});
+  }
+  ['wc-blocks_removed_from_cart', 'wc-blocks_added_to_cart'].forEach(function (name) {
+    document.body.addEventListener(name, refetch);
+  });
+  window.addEventListener('load', function () {
+    var data = window.wp && window.wp.data;
+    if (!data || !data.select('wc/store/cart')) { return; }
+    var last = null;
+    data.subscribe(function () {
+      var cart = data.select('wc/store/cart').getCartData();
+      if (cart && typeof cart.itemsCount === 'number' && cart.itemsCount !== last) {
+        last = cart.itemsCount;
+        show(last);
+      }
+    });
+  });
+})();
