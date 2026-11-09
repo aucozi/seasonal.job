@@ -102,7 +102,7 @@ function sj_signups_install(): void
 
 const SJ_SIGNUP_MESSAGES = [
     'ok' => 'You’re on the list. Check your inbox for a confirmation.',
-    'already' => 'You’re already on the list. We’ll email you before the next drop.',
+    'already' => 'You’re already on the list. We’ll email you when the next drop is out.',
     'bad' => 'That email address doesn’t look right. Try again?',
 ];
 
@@ -112,7 +112,7 @@ add_shortcode('sj_signup', function (): string {
     $back = remove_query_arg('sj_signup', home_url(wp_unslash($_SERVER['REQUEST_URI'] ?? '/')));
     $done = in_array($status, ['ok', 'already'], true);
     return '<h2 id="sj-next-drop">Next drop</h2>'
-        . '<p>Edition 02 and new designs are coming, shipping to the US and Europe. Get the link a day early.</p>'
+        . '<p>Edition 02 and new designs are coming, shipping to the US and Europe. Leave your email and we’ll let you know when they’re out.</p>'
         . '<div class="sj-signup-msg' . ($done ? ' is-done' : '') . ($status === 'bad' ? ' is-error' : '') . '" role="status" aria-live="polite"' . ($message ? '' : ' hidden') . '>' . esc_html($message) . '</div>'
         . '<form class="sj-signup" method="post" action="' . esc_url(admin_url('admin-post.php')) . '"' . ($done ? ' hidden' : '') . ' data-sj-signup>'
         . '<input type="hidden" name="action" value="sj_signup">'
@@ -153,12 +153,9 @@ function sj_send_signup_email(string $email): void
     }
     $mailer = WC()->mailer();
     $shop = esc_url(home_url('/'));
-    $body = '<p>Thanks for joining the seasonal job list.</p>'
-        . '<p>Edition 02 of LITHUSA and new designs are on the way, printed to order and shipped to the US and Europe. '
-        . 'You\'ll get the link a day before everyone else.</p>'
-        . '<p>Until then, the First Edition (the original fair run, numbered) is in the shop while it lasts: '
-        . '<a href="' . $shop . '">shop.benzilinskas.com</a>.</p>'
-        . '<p>Not you, or changed your mind? Reply to this email and we\'ll take you off the list.</p>';
+    $body = '<p>Thanks for signing up. We’ll email you when Edition 02 and new designs are out.</p>'
+        . '<p>Until then, the First Edition is in the shop while it lasts: <a href="' . $shop . '">shop.benzilinskas.com</a></p>'
+        . '<p>Changed your mind? Reply to this email and we’ll take you off the list.</p>';
     $mailer->send($email, 'You’re on the seasonal job list', $mailer->wrap_message('You’re on the list', $body));
 }
 
@@ -176,14 +173,14 @@ function sj_handle_signup(): void
 add_action('admin_post_nopriv_sj_signup', 'sj_handle_signup');
 add_action('admin_post_sj_signup', 'sj_handle_signup');
 
-/** Checkout opt-in: "Email me before the next drop", saved with the order and added to the list once it's paid. */
+/** Checkout opt-in: "Email me about the next drop", saved with the order and added to the list once it's paid. */
 add_action('woocommerce_init', function (): void {
     if (!function_exists('woocommerce_register_additional_checkout_field')) {
         return;
     }
     woocommerce_register_additional_checkout_field([
         'id' => 'seasonal-job/next-drop',
-        'label' => 'Email me before the next drop',
+        'label' => 'Email me about the next drop',
         'location' => 'contact',
         'type' => 'checkbox',
     ]);
@@ -327,6 +324,44 @@ function sj_editions_page(): void
 
 /** Checkout starts on United States with no state picked, so nothing (shipping, tax) is guessed before the address. */
 add_filter('woocommerce_customer_default_location', fn () => 'US');
+
+/**
+ * Delivery estimate under each shipping option ("Arrives Nov 13–18"), from the Shipping page's times:
+ * US 3–7 business days, Lithuania and Europe 1–3 weeks, the rest of the world 1–4 weeks.
+ */
+function sj_delivery_estimate(int $zoneId): string
+{
+    $tz = new DateTimeZone('America/Chicago');
+    $today = new DateTimeImmutable('today', $tz);
+    if ($zoneId === 1) {
+        $addBusinessDays = function (DateTimeImmutable $d, int $n): DateTimeImmutable {
+            while ($n > 0) {
+                $d = $d->modify('+1 day');
+                if ((int) $d->format('N') < 6) {
+                    $n--;
+                }
+            }
+            return $d;
+        };
+        [$from, $to] = [$addBusinessDays($today, 3), $addBusinessDays($today, 7)];
+    } else {
+        [$from, $to] = [$today->modify('+7 days'), $today->modify($zoneId === 0 ? '+28 days' : '+21 days')];
+    }
+    $range = $from->format('M') === $to->format('M')
+        ? $from->format('M j') . '–' . $to->format('j')
+        : $from->format('M j') . ' – ' . $to->format('M j');
+    return 'Arrives ' . $range;
+}
+
+add_filter('woocommerce_package_rates', function (array $rates, array $package): array {
+    $estimate = sj_delivery_estimate((int) WC_Shipping_Zones::get_zone_matching_package($package)->get_id());
+    foreach ($rates as $rate) {
+        if (method_exists($rate, 'set_delivery_time')) {
+            $rate->set_delivery_time($estimate);
+        }
+    }
+    return $rates;
+}, 20, 2);
 
 // "Pay in Person" (cash on delivery) is for sales through the Woo app at events. Keep it out of the
 // website checkout, where it would let an order through without paying.

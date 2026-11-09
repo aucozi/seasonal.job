@@ -252,3 +252,18 @@ input[type="text"], input[type="email"], input[type="tel"], input[type="number"]
 }
 .sj-signup[hidden] { display: none; }
 .sj-added-panel:focus { outline: none; }
+
+/* Size prompt: "Choose your size first." and a short highlight when the phone bar scrolls up here. */
+.sj-size-hint { margin: 10px 0 0; font-size: 16px; color: #a3141c; }
+.sj-sizes.sj-flash { animation: sj-flash 1.2s ease-out; }
+@keyframes sj-flash { 0%, 40% { box-shadow: 0 0 0 8px rgba(0, 0, 0, 0.08); background: rgba(0, 0, 0, 0.08); } 100% { box-shadow: 0 0 0 8px transparent; background: transparent; } }
+
+/* Checkout fields: a focused field gets a thicker border instead of a second box around it, and the
+   "Email me about the next drop" box sits clear of the email field. */
+.wc-block-components-text-input input:focus, .wc-block-components-text-input input:focus-visible,
+.wc-blocks-components-select select:focus, .wc-blocks-components-select select:focus-visible,
+.wc-block-components-textarea:focus { outline: none !important; box-shadow: inset 0 0 0 1px var(--sj-ink) !important; border-color: var(--sj-ink) !important; }
+.wc-block-checkout__contact-fields .wc-block-components-checkbox { margin-top: 20px !important; }
+.wc-block-components-checkbox label { gap: 12px; align-items: flex-start; }
+.wc-block-components-checkbox .wc-block-components-checkbox__input[type=checkbox] { margin: 0 !important; flex: 0 0 auto; }
+.wc-block-checkout__guest-checkout-notice { margin-top: 12px !important; }

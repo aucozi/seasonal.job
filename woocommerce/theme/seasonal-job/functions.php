@@ -86,7 +86,7 @@ add_shortcode('sj_footer', function (): string {
         . '<li><a href="https://instagram.com/seasonal.job" rel="noopener">' . $instagram . '<span>Seasonal Job</span></a></li>'
         . '<li><a href="https://open.spotify.com/artist/2Cdr4xt4kY61ECVbILaAFp" rel="noopener">' . $spotify . '<span>Spotify</span></a></li>'
         . '</ul>'
-        . '<p class="sj-foot-links"><a href="' . esc_url(sj_page_url('returns')) . '">Returns</a><a href="' . esc_url($privacy) . '">Privacy</a></p>'
+        . '<p class="sj-foot-links"><a href="' . esc_url(sj_page_url('returns')) . '">Returns</a><a href="' . esc_url(sj_page_url('terms')) . '">Terms</a><a href="' . esc_url($privacy) . '">Privacy</a></p>'
         . '<p class="sj-copyright">Ben Zilinskas / Seasonal Job All rights reserved © ' . esc_html(gmdate('Y')) . '</p>'
         . '</div>';
 });
@@ -139,7 +139,7 @@ add_shortcode('sj_shop_home', function (): string {
 
     return (string) wc_print_notices(true)
         . '<h1 class="sj-page-title">First Edition</h1>'
-        . '<p class="sj-lede">LITHUSA, the original fair run. ' . ($made ?: '') . ' pieces with their original hang tags, each shipped with a numbered card. When they\'re gone, they\'re gone.</p>'
+        . '<p class="sj-lede">LITHUSA, the first run. ' . ($made ?: '') . ' pieces with their original hang tags, each shipped with a numbered card. When they\'re gone, they\'re gone.</p>'
         . '<p class="sj-small">Ships from Texas · US ' . sj_money($flat) . ', free over ' . sj_money($free) . ' · worldwide from $20</p>'
         . '<div class="sj-grid">' . $cards . '</div>';
 });
@@ -221,7 +221,7 @@ add_shortcode('sj_product', function (): string {
         : '<p class="sj-notice">All ' . ($size ?: '') . ' are gone. Join the list below to hear about Edition 02.</p>';
 
     $facts = '<ul class="sj-facts sj-small">'
-        . '<li>Original hang tag from the fair run</li>'
+        . '<li>Original hang tag</li>'
         . ($size ? '<li>Numbered card out of ' . $size . '</li>' : '')
         . '<li>Ships from Texas within 2 business days</li>'
         . '<li>US shipping $7, free over $65 · worldwide from $20</li>'
@@ -241,7 +241,7 @@ add_shortcode('sj_product', function (): string {
 /** Link previews (Instagram, iMessage, WhatsApp): title, description, photo and, on products, the price. */
 add_action('wp_head', function (): void {
     $title = 'seasonal job — LITHUSA First Edition';
-    $description = 'The original LITHUSA fair run by Ben Zilinskas: 64 numbered pieces, shipped from Texas, worldwide.';
+    $description = 'The first LITHUSA run by Ben Zilinskas: 64 numbered pieces, shipped from Texas, worldwide.';
     $url = is_singular() ? get_permalink() : home_url('/');
     $image = '';
     $price = '';

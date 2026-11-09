@@ -14,8 +14,9 @@
     });
   });
 
-  // Variation dropdowns become buttons showing what's left in each size.
-  // A dropdown with a single choice (Colors: Black) is chosen and hidden.
+  // Variation dropdowns become buttons showing what's left in each size. No size is chosen for the
+  // buyer: "Add to cart" asks them to pick one first. A dropdown with a single choice (Colors: Black)
+  // is chosen and hidden.
   var $ = window.jQuery;
   function initSizes() {
   document.querySelectorAll('form.variations_form:not([data-sj-sizes])').forEach(function (form) {
@@ -40,7 +41,6 @@
       var wrap = document.createElement('div');
       wrap.className = 'sj-sizes';
       wrap.setAttribute('role', 'group');
-      var first = null;
       options.forEach(function (option) {
         var match = variations.filter(function (v) { return v.attributes && v.attributes[attr] === option.value; })[0];
         var left = match ? (match.max_qty === '' || match.max_qty == null ? null : parseInt(match.max_qty, 10)) : null;
@@ -56,44 +56,65 @@
           button.setAttribute('aria-pressed', 'true');
           set(select, option.value);
         });
-        if (inStock && !first) { first = button; }
         wrap.appendChild(button);
       });
       select.classList.add('sj-replaced');
       select.parentNode.insertBefore(wrap, select);
-      if (first) { first.click(); }
+      set(select, '');
     });
+
+    // "Add to cart" without a size: point at the sizes instead of WooCommerce's pop-up alert.
+    var hint = document.createElement('p');
+    hint.className = 'sj-size-hint';
+    hint.setAttribute('role', 'alert');
+    hint.hidden = true;
+    hint.textContent = 'Choose your size first.';
+    var sizes = form.querySelector('.sj-sizes');
+    if (sizes) { sizes.parentNode.insertBefore(hint, sizes.nextSibling); }
+    form.addEventListener('click', function (e) {
+      if (!e.target.closest('.single_add_to_cart_button')) { return; }
+      var missing = Array.prototype.some.call(selects, function (sel) { return sel.value === ''; });
+      if (!missing) { return; }
+      e.preventDefault();
+      e.stopPropagation();
+      e.target.closest('.single_add_to_cart_button').blur(); // no focus ring left on the button
+      hint.hidden = false;
+      if (sizes) { sizes.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    }, true);
+    form.addEventListener('change', function () { hint.hidden = true; });
   });
   }
   // Run after WooCommerce has set up its variation form on page load.
   if ($) { $(function () { setTimeout(initSizes, 0); }); } else { document.addEventListener('DOMContentLoaded', initSizes); }
 })();
 
-/* Fixed "Add to cart" bar on phones, like speeed.co: always reachable while scrolling the photos and
-   description; hidden while the real button is on screen. It presses the real button, so the
-   chosen size and WooCommerce's checks still apply. */
+/* Fixed bar on phones, like speeed.co: always reachable while scrolling the photos and description,
+   hidden while the real button is on screen. For the tee it scrolls up to the sizes, so nobody ends
+   up with a size they didn't pick; one-size hats go straight into the cart. */
 (function () {
   var buy = document.querySelector('[data-sj-buy]');
   var real = buy && buy.querySelector('.single_add_to_cart_button');
-  if (!real || !window.matchMedia) { return; }
+  if (!real) { return; }
+  var hasSizes = !!buy.querySelector('form.variations_form');
   var bar = document.createElement('div');
   bar.className = 'sj-sticky-buy';
   bar.innerHTML = '<button type="button" class="sj-button"></button>';
   var button = bar.firstChild;
-  var sizeSelect = buy.querySelector('select[name="attribute_sizes"]');
-  function label() {
-    var size = sizeSelect && sizeSelect.value ? ' · ' + sizeSelect.value : '';
-    button.textContent = 'Add to cart · ' + buy.getAttribute('data-price') + size;
-  }
-  label();
-  if (sizeSelect) { sizeSelect.addEventListener('change', label); if (window.jQuery) { window.jQuery(sizeSelect).on('change', label); } }
-  button.addEventListener('click', function () { real.click(); });
+  button.textContent = (hasSizes ? 'Choose size · ' : 'Add to cart · ') + buy.getAttribute('data-price');
+  button.addEventListener('click', function () {
+    if (!hasSizes) { real.click(); return; }
+    var sizes = buy.querySelector('.sj-sizes') || buy;
+    sizes.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    sizes.classList.remove('sj-flash');
+    void sizes.offsetWidth; // restart the highlight
+    sizes.classList.add('sj-flash');
+  });
   document.body.appendChild(bar);
   document.body.classList.add('has-sj-sticky-buy');
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (entries) {
       bar.classList.toggle('is-hidden', entries[0].isIntersecting);
-    }).observe(real);
+    }).observe(buy);
   }
 })();
 
@@ -140,4 +161,17 @@
         .catch(function () { form.submit(); });
     });
   });
+})();
+
+/* Checkout opens with "Use same address for billing" ticked. WooCommerce unticks it when the saved
+   billing and shipping addresses differ, e.g. after someone switched the shipping country and came
+   back. Most people bill to where they ship; unticking it is still one tap away. */
+(function () {
+  if (!document.querySelector('.wp-block-woocommerce-checkout')) { return; }
+  var tries = 0;
+  var timer = setInterval(function () {
+    var box = document.querySelector('.wc-block-checkout__use-address-for-billing input[type=checkbox]');
+    if (box || ++tries > 60) { clearInterval(timer); }
+    if (box && !box.checked) { box.click(); }
+  }, 250);
 })();
